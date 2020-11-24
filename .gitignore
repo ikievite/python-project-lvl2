@@ -1,0 +1,9 @@
+# Byte-compiled / optimized
+__pycache__/
+#
+*.swp
+*.pyc
+.venv
+dist/
+*.egg-info/
+
