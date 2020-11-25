@@ -1,9 +1,8 @@
 # Byte-compiled / optimized
 __pycache__/
-#
 *.swp
 *.pyc
-.venv
+.venv/
 dist/
 *.egg-info/
 
