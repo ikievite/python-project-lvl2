@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+
+
+import argparse
 
 
 # Docstring
@@ -6,7 +8,10 @@
 
 def main():
     # Docstring
-    print('hello')
+    parser = argparse.ArgumentParser(description='Generate diff')
+    parser.add_argument('first_file', action='store')
+    parser.add_argument('second_file', action='store')
+    args = parser.parse_args()
 
 
 if __name__ == '__main__':
