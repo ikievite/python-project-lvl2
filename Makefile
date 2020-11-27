@@ -7,5 +7,8 @@ gendiff:
 lint:
 	poetry run flake8 gendiff
 
-.PHONY: install gendiff lint
+build:
+	poetry build
+
+.PHONY: install gendiff lint build
 
