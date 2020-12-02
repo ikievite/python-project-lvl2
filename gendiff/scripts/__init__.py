@@ -1,1 +1,1 @@
-'''gendiff script'''
+"""Gendiff script."""
