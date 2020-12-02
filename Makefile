@@ -10,5 +10,8 @@ lint:
 build:
 	poetry build
 
-.PHONY: install gendiff lint build
+package-install:
+	python3.8 -m pip install --user dist/*.whl
+
+.PHONY: install gendiff lint build package-install
 
