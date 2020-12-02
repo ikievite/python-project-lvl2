@@ -1,1 +1,1 @@
-'''Gendiff project.'''
+"""Gendiff project."""
