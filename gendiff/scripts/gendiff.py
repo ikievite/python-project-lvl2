@@ -30,11 +30,11 @@ def find_equal_items(file1, file2):
     Returns:
         dict with equal items
     """
-    result = []
+    equals = []
     for entry in file1.items():
         if entry in file2.items():
-            result.append(dict([(' ', (entry))]))
-    return result
+            equals.append(dict([(' ', (entry))]))
+    return equals
 
 
 def find_removed_keys(file1, file2):
@@ -47,11 +47,11 @@ def find_removed_keys(file1, file2):
     Returns:
         dict with removed items
     """
-    result = []
+    removed = []
     for key in file1.keys():
         if key not in file2.keys():
-            result.append(dict([('-', (key, file1[key]))]))
-    return result
+            removed.append(dict([('-', (key, file1[key]))]))
+    return removed
 
 
 def find_added_keys(file1, file2):
@@ -64,11 +64,11 @@ def find_added_keys(file1, file2):
     Returns:
         dict with added items
     """
-    result = []
+    added = []
     for key in file2.keys():
         if key not in file1.keys():
-            result.append(dict([('+', (key, file2[key]))]))
-    return result
+            added.append(dict([('+', (key, file2[key]))]))
+    return added
 
 
 def find_changed_values(file1, file2):
@@ -81,13 +81,13 @@ def find_changed_values(file1, file2):
     Returns:
         dict with equal items
     """
-    result = []
+    changed = []
     for key, value in file1.items():
         if key in file2.keys():
             if value != file2[key]:
-                result.append(dict([('-', (key, file1[key]))]))
-                result.append(dict([('+', (key, file2[key]))]))
-    return result
+                changed.append(dict([('-', (key, file1[key]))]))
+                changed.append(dict([('+', (key, file2[key]))]))
+    return changed
 
 
 def generate_diff(file1, file2):
@@ -101,19 +101,18 @@ def generate_diff(file1, file2):
         string with diff
     """
     content1, content2 = read_file(file1), read_file(file2)
-    data = []
-    data.extend(find_equal_items(content1, content2))
-    data.extend(find_removed_keys(content1, content2))
-    data.extend(find_changed_values(content1, content2))
-    data.extend(find_added_keys(content1, content2))
+    diff = []
+    diff.extend(find_equal_items(content1, content2))
+    diff.extend(find_removed_keys(content1, content2))
+    diff.extend(find_changed_values(content1, content2))
+    diff.extend(find_added_keys(content1, content2))
     result = ['{']
-    for item in sorted(data, key=lambda k: list(k.values())[0][0]):
+    for item in sorted(diff, key=lambda k: list(k.values())[0][0]):
         badge = list(item.keys())[0]
         key, value = list(item.values())[0]
         result.append('  {} {}: {}'.format(badge, key, value))
     result.append('}')
-    result = '\n'.join(result)
-    return result
+    return '\n'.join(result)
 
 
 def main():
