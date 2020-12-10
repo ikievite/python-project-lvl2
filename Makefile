@@ -13,5 +13,8 @@ build:
 package-install:
 	python3.8 -m pip install --user dist/*.whl
 
+test:
+	poetry run pytest --cov=gendiff --cov-report xml tests/
+
 .PHONY: install gendiff lint build package-install
 
