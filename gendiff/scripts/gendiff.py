@@ -16,7 +16,7 @@ def read_file(filename):
     Returns:
         conten of file
     """
-    with open(filename) as f:
+    with open(filename) as f:  # noqa: WPS111
         return json.load(f)
 
 
@@ -33,7 +33,7 @@ def find_equal_items(file1, file2):
     equals = []
     for entry in file1.items():
         if entry in file2.items():
-            equals.append(dict([(' ', (entry))]))
+            equals.append({' ': entry})
     return equals
 
 
@@ -50,7 +50,7 @@ def find_removed_keys(file1, file2):
     removed = []
     for key in file1.keys():
         if key not in file2.keys():
-            removed.append(dict([('-', (key, file1[key]))]))
+            removed.append({'-': (key, file1[key])})
     return removed
 
 
@@ -67,7 +67,7 @@ def find_added_keys(file1, file2):
     added = []
     for key in file2.keys():
         if key not in file1.keys():
-            added.append(dict([('+', (key, file2[key]))]))
+            added.append({'+': (key, file2[key])})
     return added
 
 
@@ -85,8 +85,8 @@ def find_changed_values(file1, file2):
     for key, value in file1.items():
         if key in file2.keys():
             if value != file2[key]:
-                changed.append(dict([('-', (key, file1[key]))]))
-                changed.append(dict([('+', (key, file2[key]))]))
+                changed.append({'-': (key, file1[key])})
+                changed.append({'+': (key, file2[key])})
     return changed
 
 
@@ -124,7 +124,7 @@ def main():
         '-f', '--format', action='store', help='set format of output',
     )
     args = parser.parse_args()
-    print(generate_diff(args.first_file, args.second_file))
+    print(generate_diff(args.first_file, args.second_file))  # noqa: WPS421
 
 
 if __name__ == '__main__':
