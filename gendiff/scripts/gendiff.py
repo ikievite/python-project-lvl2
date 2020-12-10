@@ -48,9 +48,9 @@ def find_removed_keys(file1, file2):
         dict with removed items
     """
     removed = []
-    for key in file1.keys():
-        if key not in file2.keys():
-            removed.append({'-': (key, file1[key])})
+    for json_key in file1.keys():
+        if json_key not in file2.keys():
+            removed.append({'-': (json_key, file1[json_key])})
     return removed
 
 
@@ -65,9 +65,9 @@ def find_added_keys(file1, file2):
         dict with added items
     """
     added = []
-    for key in file2.keys():
-        if key not in file1.keys():
-            added.append({'+': (key, file2[key])})
+    for json_key in file2.keys():
+        if json_key not in file1.keys():
+            added.append({'+': (json_key, file2[json_key])})
     return added
 
 
@@ -82,15 +82,15 @@ def find_changed_values(file1, file2):
         dict with equal items
     """
     changed = []
-    for key, value in file1.items():
-        if key in file2.keys():
-            if value != file2[key]:
-                changed.append({'-': (key, file1[key])})
-                changed.append({'+': (key, file2[key])})
+    for json_key, json_value in file1.items():
+        if json_key in file2.keys():
+            if json_value != file2[json_key]:
+                changed.append({'-': (json_key, file1[json_key])})
+                changed.append({'+': (json_key, file2[json_key])})
     return changed
 
 
-def generate_diff(file1, file2):
+def generate_diff(file1, file2):  # noqa: WPS210
     """Func generate diff of two files.
 
     Args:
@@ -106,13 +106,12 @@ def generate_diff(file1, file2):
     diff.extend(find_removed_keys(content1, content2))
     diff.extend(find_changed_values(content1, content2))
     diff.extend(find_added_keys(content1, content2))
-    result = ['{']
-    for item in sorted(diff, key=lambda k: list(k.values())[0][0]):
-        badge = list(item.keys())[0]
-        key, value = list(item.values())[0]
-        result.append('  {} {}: {}'.format(badge, key, value))
-    result.append('}')
-    return '\n'.join(result)
+    output = ['{']
+    for element in sorted(diff, key=lambda key_of_item: list(key_of_item.values())[0][0]):  # noqa: WPS221, E501
+        for badge, diff_values in element.items():
+            output.append('  {0} {1}: {2}'.format(badge, diff_values[0], diff_values[1]))
+    output.append('}')
+    return '\n'.join(output)
 
 
 def main():
