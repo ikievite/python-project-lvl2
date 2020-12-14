@@ -448,7 +448,7 @@ pytest = ">=4.6"
 testing = ["fields", "hunter", "process-tests (2.0.2)", "six", "pytest-xdist", "virtualenv"]
 
 [[package]]
-category = "dev"
+category = "main"
 description = "YAML parser and emitter for Python"
 name = "pyyaml"
 optional = false
@@ -560,7 +560,7 @@ pygments = ">=2.4,<3.0"
 typing_extensions = ">=3.6,<4.0"
 
 [metadata]
-content-hash = "a3ceb298651ed5da39014fa7e39e69ac8f61b47f979bd44c5188e7510b0f5893"
+content-hash = "654834daefa454fc4e6139bfebd44749dc2173e54ef73376022124d53aaa9358"
 python-versions = "^3.8"
 
 [metadata.files]
