@@ -7,7 +7,7 @@
 ### Hexlet Python Project. Level 2
 
 Example: Run gendiff
-<script id="asciicast-3awsblJyEGmNEYiJYq6NY7voT" src="https://asciinema.org/a/3awsblJyEGmNEYiJYq6NY7voT.js" async></script>
+[![asciicast](https://asciinema.org/a/3awsblJyEGmNEYiJYq6NY7voT.svg)](https://asciinema.org/a/3awsblJyEGmNEYiJYq6NY7voT)
 
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/ikievite/python-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/ikievite/python-project-lvl2/actions)
