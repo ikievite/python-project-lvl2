@@ -4,20 +4,8 @@
 
 
 import argparse
-import json
 
-
-def read_file(filename):
-    """Func read json file.
-
-    Args:
-        filename: path to file
-
-    Returns:
-        conten of file
-    """
-    with open(filename) as f:  # noqa: WPS111
-        return json.load(f)
+from gendiff.loader import loader
 
 
 def find_equal_items(file1, file2):
@@ -100,7 +88,7 @@ def generate_diff(file1, file2):  # noqa: WPS210
     Returns:
         string with diff
     """
-    content1, content2 = read_file(file1), read_file(file2)
+    content1, content2 = loader(file1), loader(file2)
     diff = []
     diff.extend(find_equal_items(content1, content2))
     diff.extend(find_removed_keys(content1, content2))
