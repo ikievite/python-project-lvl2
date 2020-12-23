@@ -4,78 +4,42 @@
 
 
 import argparse
+from pprint import pprint
 
 from gendiff.loader import loader
 
 
-def find_equal_items(file1, file2):
-    """Func find equal items.
+def find_diff(file1, file2):
+    """Func find diff items.
 
     Args:
         file1: content of first file
         file2: content of second file
 
     Returns:
-        dict with equal items
+        list with diff items
     """
-    equals = []
-    for entry in file1.items():
-        if entry in file2.items():
-            equals.append({' ': entry})
-    return equals
-
-
-def find_removed_keys(file1, file2):
-    """Func find removed items.
-
-    Args:
-        file1: content of first file
-        file2: content of second file
-
-    Returns:
-        dict with removed items
-    """
-    removed = []
-    for json_key in file1.keys():
-        if json_key not in file2.keys():
-            removed.append({'-': (json_key, file1[json_key])})
-    return removed
-
-
-def find_added_keys(file1, file2):
-    """Func find added items.
-
-    Args:
-        file1: content of first file
-        file2: content of second file
-
-    Returns:
-        dict with added items
-    """
-    added = []
-    for json_key in file2.keys():
-        if json_key not in file1.keys():
-            added.append({'+': (json_key, file2[json_key])})
-    return added
-
-
-def find_changed_values(file1, file2):
-    """Func find equal items.
-
-    Args:
-        file1: content of first file
-        file2: content of second file
-
-    Returns:
-        dict with equal items
-    """
-    changed = []
-    for json_key, json_value in file1.items():
-        if json_key in file2.keys():
-            if json_value != file2[json_key]:
-                changed.append({'-': (json_key, file1[json_key])})
-                changed.append({'+': (json_key, file2[json_key])})
-    return changed
+    diff = []
+    common = list(file1.keys() & file2.keys())
+    removed = list(file1.keys() - file2.keys())
+    added = list(file2.keys() - file1.keys())
+    for key in common:
+        if file1[key] == file2[key]:
+            diff.append({' ': {key: file1[key]}})
+    for key in common:
+        value1 = file1[key]
+        value2 = file2[key]
+        if value1 != value2:
+            if isinstance(value1, dict) and isinstance(value2, dict):
+                diff.append({' ': {key: find_diff(value1, value2)}})
+            else:
+                diff.append({'-': {key: value1}})
+                diff.append({'+': {key: value2}})
+    for key in removed:
+        diff.append({'-': {key: file1[key]}})
+    for key in added:
+        diff.append({'+': {key: file2[key]}})
+    return diff
 
 
 def generate_diff(file1, file2):  # noqa: WPS210
@@ -89,6 +53,8 @@ def generate_diff(file1, file2):  # noqa: WPS210
         string with diff
     """
     content1, content2 = loader(file1), loader(file2)
+    return find_diff(content1, content2)
+    '''
     diff = []
     diff.extend(find_equal_items(content1, content2))
     diff.extend(find_removed_keys(content1, content2))
@@ -100,6 +66,8 @@ def generate_diff(file1, file2):  # noqa: WPS210
             output.append('  {0} {1}: {2}'.format(badge, diff_values[0], diff_values[1]))
     output.append('}')
     return '\n'.join(output)
+    return output
+    '''
 
 
 def main():
@@ -111,7 +79,7 @@ def main():
         '-f', '--format', action='store', help='set format of output',
     )
     args = parser.parse_args()
-    print(generate_diff(args.first_file, args.second_file))  # noqa: WPS421
+    pprint(generate_diff(args.first_file, args.second_file))  # noqa: WPS421
 
 
 if __name__ == '__main__':
