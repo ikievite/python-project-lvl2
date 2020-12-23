@@ -42,6 +42,15 @@ def find_diff(file1, file2):
     return diff
 
 
+def stylish_formater(diff_dict):
+    """
+    """
+    for element in diff_dict:
+        for badge, diff_values in element.items():
+            key, value = list(diff_values.items())[0]
+            print('  {0} {1}: {2}'.format(badge, key, value))
+
+
 def generate_diff(file1, file2):  # noqa: WPS210
     """Func generate diff of two files.
 
@@ -79,7 +88,8 @@ def main():
         '-f', '--format', action='store', help='set format of output',
     )
     args = parser.parse_args()
-    pprint(generate_diff(args.first_file, args.second_file))  # noqa: WPS421
+    diff = generate_diff(args.first_file, args.second_file)  # noqa: WPS421
+    stylish_formater(diff)
 
 
 if __name__ == '__main__':
