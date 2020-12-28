@@ -9,7 +9,7 @@ from pprint import pprint
 from gendiff.loader import loader
 
 
-def find_diff(file1, file2):
+def find_diff2(file1, file2):
     """Func find diff items.
 
     Args:
@@ -20,35 +20,68 @@ def find_diff(file1, file2):
         list with diff items
     """
     diff = []
-    common = list(file1.keys() & file2.keys())
-    removed = list(file1.keys() - file2.keys())
-    added = list(file2.keys() - file1.keys())
-    for key in common:
-        if file1[key] == file2[key]:
-            diff.append({' ': {key: file1[key]}})
-    for key in common:
-        value1 = file1[key]
-        value2 = file2[key]
-        if value1 != value2:
-            if isinstance(value1, dict) and isinstance(value2, dict):
-                diff.append({' ': {key: find_diff(value1, value2)}})
+    for key in file1:
+        item = {}
+        if key in file2:
+            value1 = file1[key]
+            value2 = file2[key]
+            if value1 == value2:
+                item['name'] = key
+                item['badge'] = ' '
+                if isinstance(value1, dict) and isinstance(value2, dict):
+                    item['type'] = 'nested'
+                    item['value'] = find_diff2(value1, value2)
+                    diff.append(item)
+                else:
+                    item['type'] = 'flat'
+                    item['value'] = value1
+                    diff.append(item)
             else:
-                diff.append({'-': {key: value1}})
-                diff.append({'+': {key: value2}})
-    for key in removed:
-        diff.append({'-': {key: file1[key]}})
-    for key in added:
-        diff.append({'+': {key: file2[key]}})
+                item['name'] = key
+                if isinstance(value1, dict) and isinstance(value2, dict):
+                    item['badge'] = ' '
+                    item['type'] = 'nested'
+                    item['value'] = find_diff2(value1, value2)
+                    diff.append(item)
+                else:
+                    item['badge'] = '-'
+                    item['type'] = 'flat'
+                    item['value'] = value1
+                    diff.append(item)
+                    item = {}
+                    item['name'] = key
+                    item['type'] = 'flat'
+                    item['badge'] = '+'
+                    item['value'] = value2
+                    diff.append(item)
+        elif key not in file2:
+            item['name'] = key
+            item['badge'] = '-'
+            item['type'] = 'flat'
+            item['value'] = file1[key]
+            diff.append(item)
+    for key in file2:
+        item = {}
+        if key not in file1:
+            item['name'] = key
+            item['badge'] = '+'
+            item['type'] = 'flat'
+            item['value'] = file2[key]
+            diff.append(item)
     return diff
 
 
-def stylish_formater(diff_dict):
+def stylish_formater(diff, level=1):
     """
     """
-    for element in diff_dict:
-        for badge, diff_values in element.items():
-            key, value = list(diff_values.items())[0]
-            print('  {0} {1}: {2}'.format(badge, key, value))
+    '''
+    for element in diff:
+        if element['type'] == 'flat':
+            print('  {0} {1}: {2}'.format(element['badge'], element['name'], element['value']))
+        elif element['type'] == 'nested':
+            print('  {0} {1}: {2}'.format(element['badge'], element['name'], '{'))
+            stylish_formater(element['value'])
+    '''
 
 
 def generate_diff(file1, file2):  # noqa: WPS210
@@ -62,20 +95,16 @@ def generate_diff(file1, file2):  # noqa: WPS210
         string with diff
     """
     content1, content2 = loader(file1), loader(file2)
-    return find_diff(content1, content2)
+    diff = find_diff2(content1, content2)
+    #pprint(diff)
+    print('\n'.join(stylish_formater(diff)))
+
     '''
-    diff = []
-    diff.extend(find_equal_items(content1, content2))
-    diff.extend(find_removed_keys(content1, content2))
-    diff.extend(find_changed_values(content1, content2))
-    diff.extend(find_added_keys(content1, content2))
     output = ['{']
     for element in sorted(diff, key=lambda key_of_item: list(key_of_item.values())[0][0]):  # noqa: WPS221, E501
         for badge, diff_values in element.items():
             output.append('  {0} {1}: {2}'.format(badge, diff_values[0], diff_values[1]))
     output.append('}')
-    return '\n'.join(output)
-    return output
     '''
 
 
@@ -89,7 +118,7 @@ def main():
     )
     args = parser.parse_args()
     diff = generate_diff(args.first_file, args.second_file)  # noqa: WPS421
-    stylish_formater(diff)
+    # stylish_formater2(diff)
 
 
 if __name__ == '__main__':
