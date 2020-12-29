@@ -4,12 +4,11 @@
 
 
 import argparse
-from pprint import pprint
 
 from gendiff.loader import loader
 
 
-def find_diff2(file1, file2):
+def find_diff(file1, file2):
     """Func find diff items.
 
     Args:
@@ -20,68 +19,80 @@ def find_diff2(file1, file2):
         list with diff items
     """
     diff = []
-    for key in file1:
-        item = {}
+    for key in file1.keys():
+        entry = {}
+        entry['name'] = key
         if key in file2:
-            value1 = file1[key]
-            value2 = file2[key]
+            value1 = file1.get(key)
+            value2 = file2.get(key)
             if value1 == value2:
-                item['name'] = key
-                item['badge'] = ' '
+                entry['badge'] = ' '  # noqa: WPS204
                 if isinstance(value1, dict) and isinstance(value2, dict):
-                    item['type'] = 'nested'
-                    item['value'] = find_diff2(value1, value2)
-                    diff.append(item)
+                    entry['type'] = 'nested'  # noqa: WPS204
+                    entry['value'] = find_diff(value1, value2)  # noqa: WPS204
+                    diff.append(entry)  # noqa: WPS204
                 else:
-                    item['type'] = 'flat'
-                    item['value'] = value1
-                    diff.append(item)
-            else:
-                item['name'] = key
+                    entry['type'] = 'flat'
+                    entry['value'] = value1
+                    diff.append(entry)
+            elif value1 != value2:
                 if isinstance(value1, dict) and isinstance(value2, dict):
-                    item['badge'] = ' '
-                    item['type'] = 'nested'
-                    item['value'] = find_diff2(value1, value2)
-                    diff.append(item)
+                    entry['badge'] = ' '
+                    entry['type'] = 'nested'
+                    entry['value'] = find_diff(value1, value2)
+                    diff.append(entry)
                 else:
-                    item['badge'] = '-'
-                    item['type'] = 'flat'
-                    item['value'] = value1
-                    diff.append(item)
-                    item = {}
-                    item['name'] = key
-                    item['type'] = 'flat'
-                    item['badge'] = '+'
-                    item['value'] = value2
-                    diff.append(item)
-        elif key not in file2:
-            item['name'] = key
-            item['badge'] = '-'
-            item['type'] = 'flat'
-            item['value'] = file1[key]
-            diff.append(item)
-    for key in file2:
-        item = {}
+                    entry['badge'] = '-'
+                    entry['type'] = 'flat'
+                    entry['value'] = value1
+                    diff.append(entry)
+                    entry = {}
+                    entry['name'] = key
+                    entry['type'] = 'flat'
+                    entry['badge'] = '+'
+                    entry['value'] = value2
+                    diff.append(entry)
+        elif key not in file2.keys():
+            entry['badge'] = '-'
+            entry['type'] = 'flat'
+            entry['value'] = file1[key]
+            diff.append(entry)
+    for key in file2.keys():
+        entry = {}
         if key not in file1:
-            item['name'] = key
-            item['badge'] = '+'
-            item['type'] = 'flat'
-            item['value'] = file2[key]
-            diff.append(item)
+            entry['name'] = key
+            entry['badge'] = '+'
+            entry['type'] = 'flat'
+            entry['value'] = file2[key]
+            diff.append(entry)
     return diff
 
 
-def stylish_formater(diff, level=1):
+def stylish_formater(diff):
+    """Func that display diff tree.
+
+    Args:
+        diff: list with diff dicts
+
+    Returns:
+        output string
     """
-    """
-    '''
-    for element in diff:
-        if element['type'] == 'flat':
-            print('  {0} {1}: {2}'.format(element['badge'], element['name'], element['value']))
-        elif element['type'] == 'nested':
-            print('  {0} {1}: {2}'.format(element['badge'], element['name'], '{'))
-            stylish_formater(element['value'])
-    '''
+    output = ['{']
+
+    def iter_node(nodes, depth):  # noqa: WPS430
+        for element in nodes:
+            if element['type'] == 'flat':
+                output.append('  {0}{1} {2}: {3}'.format(
+                    '  '*depth, element['badge'], element['name'], element['value'],
+                ))
+            elif element['type'] == 'nested':
+                output.append('  {0}{1} {2}: {3}'.format(
+                    '  '*depth, element['badge'], element['name'], '{',
+                ))
+                iter_node(element['value'], depth + 2)
+        output.append('{0} {1}'.format('  '*depth, '}'))
+        return '\n'.join(output)
+    return iter_node(diff, 0)
 
 
 def generate_diff(file1, file2):  # noqa: WPS210
@@ -95,17 +106,9 @@ def generate_diff(file1, file2):  # noqa: WPS210
         string with diff
     """
     content1, content2 = loader(file1), loader(file2)
-    diff = find_diff2(content1, content2)
-    #pprint(diff)
-    print('\n'.join(stylish_formater(diff)))
+    return find_diff(content1, content2)
 
-    '''
-    output = ['{']
-    for element in sorted(diff, key=lambda key_of_item: list(key_of_item.values())[0][0]):  # noqa: WPS221, E501
-        for badge, diff_values in element.items():
-            output.append('  {0} {1}: {2}'.format(badge, diff_values[0], diff_values[1]))
-    output.append('}')
-    '''
+    # sorted(diff, key=lambda key_of_item: list(key_of_item.values())[0][0])  # noqa: E800
 
 
 def main():
@@ -117,8 +120,8 @@ def main():
         '-f', '--format', action='store', help='set format of output',
     )
     args = parser.parse_args()
-    diff = generate_diff(args.first_file, args.second_file)  # noqa: WPS421
-    # stylish_formater2(diff)
+    diff = generate_diff(args.first_file, args.second_file)
+    print(stylish_formater(diff))  # noqa: WPS421
 
 
 if __name__ == '__main__':
