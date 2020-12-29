@@ -20,51 +20,60 @@ def find_diff(file1, file2):
     """
     diff = []
     for key in file1.keys():
-        entry = {}
-        entry['name'] = key
         if key in file2:
             value1 = file1.get(key)
             value2 = file2.get(key)
             if value1 == value2:
-                entry['badge'] = ' '  # noqa: WPS204
                 if isinstance(value1, dict) and isinstance(value2, dict):
-                    entry['type'] = 'nested'  # noqa: WPS204
-                    entry['value'] = find_diff(value1, value2)  # noqa: WPS204
-                    diff.append(entry)  # noqa: WPS204
+                    diff.append({
+                        'name': key,
+                        'type': 'nested',
+                        'badge': ' ',
+                        'value': find_diff(value1, value2),
+                    })
                 else:
-                    entry['type'] = 'flat'
-                    entry['value'] = value1
-                    diff.append(entry)
+                    diff.append({
+                        'name': key,
+                        'type': 'flat',
+                        'badge': ' ',
+                        'value': value1,
+                    })
             elif value1 != value2:
                 if isinstance(value1, dict) and isinstance(value2, dict):
-                    entry['badge'] = ' '
-                    entry['type'] = 'nested'
-                    entry['value'] = find_diff(value1, value2)
-                    diff.append(entry)
+                    diff.append({
+                        'name': key,
+                        'type': 'nested',
+                        'badge': ' ',
+                        'value': find_diff(value1, value2),
+                    })
                 else:
-                    entry['badge'] = '-'
-                    entry['type'] = 'flat'
-                    entry['value'] = value1
-                    diff.append(entry)
-                    entry = {}
-                    entry['name'] = key
-                    entry['type'] = 'flat'
-                    entry['badge'] = '+'
-                    entry['value'] = value2
-                    diff.append(entry)
+                    diff.append({
+                        'name': key,
+                        'type': 'flat',
+                        'badge': '-',
+                        'value': value1,
+                    })
+                    diff.append({
+                        'name': key,
+                        'type': 'flat',
+                        'badge': '+',
+                        'value': value2,
+                    })
         elif key not in file2.keys():
-            entry['badge'] = '-'
-            entry['type'] = 'flat'
-            entry['value'] = file1[key]
-            diff.append(entry)
-    for key in file2.keys():
-        entry = {}
+            diff.append({
+                'name': key,
+                'type': 'flat',
+                'badge': '-',
+                'value': file1[key],
+            })
+    for key in file2.keys():  # noqa: WPS440
         if key not in file1:
-            entry['name'] = key
-            entry['badge'] = '+'
-            entry['type'] = 'flat'
-            entry['value'] = file2[key]
-            diff.append(entry)
+            diff.append({
+                'name': key,
+                'type': 'flat',
+                'badge': '+',
+                'value': file2[key],
+            })
     return diff
 
 
@@ -90,7 +99,7 @@ def stylish_formater(diff):
                     '  '*depth, element['badge'], element['name'], '{',
                 ))
                 iter_node(element['value'], depth + 2)
-        output.append('{0} {1}'.format('  '*depth, '}'))
+        output.append('{0}{1}'.format('  '*depth, '}'))
         return '\n'.join(output)
     return iter_node(diff, 0)
 
