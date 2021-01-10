@@ -36,7 +36,7 @@ def test_generate_diff_def_stylish():
 
 
 def test_generate_diff_nested_json():
-    with open('tests/fixtures/diff_nested.txt') as f:
+    with open('tests/fixtures/diff_nested_stylish.txt') as f:
         expected = f.read().strip()
     file1 = 'tests/fixtures/nested1.json'
     file2 = 'tests/fixtures/nested2.json'
@@ -44,8 +44,15 @@ def test_generate_diff_nested_json():
 
 
 def test_generate_diff_nested_yaml():
-    with open('tests/fixtures/diff_nested.txt') as f:
+    with open('tests/fixtures/diff_nested_stylish.txt') as f:
         expected = f.read().strip()
     file1 = 'tests/fixtures/nested1.yaml'
     file2 = 'tests/fixtures/nested2.yaml'
     assert generate_diff(file1, file2) == expected
+
+def test_generate_diff_nested_plain():
+    with open('tests/fixtures/diff_nested_plain.txt') as f:
+        expected = f.read().strip()
+    file1 = 'tests/fixtures/nested1.json'
+    file2 = 'tests/fixtures/nested2.json'
+    assert generate_diff(file1, file2, 'plain') == expected
