@@ -6,6 +6,7 @@
 import argparse
 
 from gendiff.loader import loader
+from pprint import pprint
 
 
 def find_diff(file1, file2):
@@ -192,6 +193,34 @@ def stylish_formater(diff):
     return iter_node(diff, 0)
 
 
+def plain_formater(diff):
+    """Func that display diff tree.
+
+    Args:
+        diff: list with diff dicts
+
+    Returns:
+        output string
+    """
+    diff.sort(key=lambda entry: entry['name'])
+    output = []
+
+    def iter_node(nodes, path):
+        for node in nodes:
+            if node['badge'] == '-':
+                output.append('Property \'{}\' was removed'.format(node['name']))
+            elif node['badge'] == '+':
+                if node['type'] == 'flat':
+                    value_of_property = node['value']
+                elif node['type'] == 'nested' and isinstance(node['children'], dict):
+                    value_of_property = '[complex value]'
+                output.append('Property \'{}\' was added with value: {}'.format(
+                    node['name'], value_of_property))
+            #elif node['badge'] == ' ':
+        return '\n'.join(output)
+    return iter_node(diff, [])
+
+
 def generate_diff(file1, file2, formater='stylish'):  # noqa: WPS210
     """Func generate diff of two files.
 
@@ -207,6 +236,8 @@ def generate_diff(file1, file2, formater='stylish'):  # noqa: WPS210
     diff = find_diff(content1, content2)
     if formater == 'stylish':
         return stylish_formater(diff)
+    elif formater == 'plain':
+        return plain_formater(diff)
 
 
 def main():
