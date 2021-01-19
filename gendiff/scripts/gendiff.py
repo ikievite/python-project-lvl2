@@ -5,8 +5,9 @@
 
 import argparse
 
+from gendiff.formaters.plain import plain_formater
+from gendiff.formaters.stylish import stylish_formater
 from gendiff.loader import loader
-from pprint import pprint
 
 
 def find_diff(file1, file2):
@@ -51,7 +52,7 @@ def find_diff(file1, file2):
                     if len(value1) == 1:
                         diff.append({
                             'name': key,
-                            'type': 'flat',
+                            'type': 'complex',
                             'badge': '-',
                             'value': value1,
                         })
@@ -106,9 +107,9 @@ def find_diff(file1, file2):
                 else:
                     diff.append({
                         'name': key,
-                        'type': 'nested',
+                        'type': 'complex',
                         'badge': '-',
-                        'children': file1[key],
+                        'value': file1[key],
                     })
             else:
                 diff.append({
@@ -123,16 +124,16 @@ def find_diff(file1, file2):
                 if len(file2[key]) == 1:
                     diff.append({
                         'name': key,
-                        'type': 'flat',
+                        'type': 'complex',
                         'badge': '+',
                         'value': file2[key],
                     })
                 else:
                     diff.append({
                         'name': key,
-                        'type': 'nested',
+                        'type': 'complex',
                         'badge': '+',
-                        'children': file2[key],
+                        'value': file2[key],
                     })
             else:
                 diff.append({
@@ -142,83 +143,6 @@ def find_diff(file1, file2):
                     'value': file2[key],
                 })
     return diff
-
-
-def stylish_formater(diff):
-    """Func that display diff tree.
-
-    Args:
-        diff: list with diff dicts
-
-    Returns:
-        output string
-    """
-    diff.sort(key=lambda entry: entry['name'])
-    output = ['{']
-
-    def iter_node(nodes, depth):  # noqa: WPS430
-        if isinstance(nodes, dict):
-            for node_key, node_value in nodes.items():
-                if isinstance(node_value, dict):
-                    output.append('  {0}  {1}: {2}'.format('  '*depth, node_key, '{'))
-                    iter_node(node_value, depth + 2)
-                else:
-                    output.append('  {0}  {1}: {2}'.format('  '*depth, node_key, node_value))
-        else:
-            for element in nodes:  # noqa: WPS426
-                if element['type'] == 'flat':
-                    if isinstance(element['value'], dict):
-                        output.append('  {0}{1} {2}: {3}'.format(
-                            '  '*depth, element['badge'], element['name'], '{',
-                        ))
-                        output.append('      {0}  {1}: {2}'.format(
-                            '  '*depth,
-                            list(element['value'])[0],
-                            list(element['value'].values())[0],
-                        ))
-                        output.append('    {0}{1}'.format('  '*depth, '}'))
-                    else:
-                        output.append('  {0}{1} {2}: {3}'.format(
-                            '  '*depth, element['badge'], element['name'], element['value'],
-                        ))
-                elif element['type'] == 'nested':
-                    if isinstance(element['children'], list):
-                        element['children'].sort(key=lambda child: child['name'])
-                    output.append('  {0}{1} {2}: {3}'.format(
-                        '  '*depth, element['badge'], element['name'], '{',
-                    ))
-                    iter_node(element['children'], depth + 2)
-        output.append('{0}{1}'.format('  '*depth, '}'))
-        return '\n'.join(output)
-    return iter_node(diff, 0)
-
-
-def plain_formater(diff):
-    """Func that display diff tree.
-
-    Args:
-        diff: list with diff dicts
-
-    Returns:
-        output string
-    """
-    diff.sort(key=lambda entry: entry['name'])
-    output = []
-
-    def iter_node(nodes, path):
-        for node in nodes:
-            if node['badge'] == '-':
-                output.append('Property \'{}\' was removed'.format(node['name']))
-            elif node['badge'] == '+':
-                if node['type'] == 'flat':
-                    value_of_property = node['value']
-                elif node['type'] == 'nested' and isinstance(node['children'], dict):
-                    value_of_property = '[complex value]'
-                output.append('Property \'{}\' was added with value: {}'.format(
-                    node['name'], value_of_property))
-            #elif node['badge'] == ' ':
-        return '\n'.join(output)
-    return iter_node(diff, [])
 
 
 def generate_diff(file1, file2, formater='stylish'):  # noqa: WPS210
