@@ -5,6 +5,7 @@
 
 import argparse
 
+from gendiff.formaters.json import json_formater
 from gendiff.formaters.plain import plain_formater
 from gendiff.formaters.stylish import stylish_formater
 from gendiff.loader import loader
@@ -162,6 +163,8 @@ def generate_diff(file1, file2, formater='stylish'):  # noqa: WPS210
         return stylish_formater(diff)
     elif formater == 'plain':
         return plain_formater(diff)
+    elif formater == 'json':
+        return json_formater(diff)
 
 
 def main():
