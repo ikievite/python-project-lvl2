@@ -29,8 +29,8 @@ def stylish_formater(diff):
                     '  '*depth, node['badge'], node['name'], '{',
                 ))
 
-                def iter_complex(node, depth):  # noqa: WPS430, WPS442
-                    for node_key, node_value in node.items():
+                def iter_complex(complex_node, depth):  # noqa: WPS430, WPS442
+                    for node_key, node_value in complex_node.items():
                         if isinstance(node_value, dict):
                             output.append('      {0}  {1}: {2}'.format(
                                 '  '*depth, node_key, '{',
