@@ -30,19 +30,14 @@ def find_updated_values(nodes, node_name):
     Returns:
         dict with values
     """
+    updated = {}
     for node in nodes:
         if node['name'] == node_name:
-            if node['badge'] == '-':
-                if node['type'] == 'complex':
-                    removed = '[complex value]'
-                else:
-                    removed = node['value']
-            elif node['badge'] == '+':
-                if node['type'] == 'complex':
-                    added = '[complex value]'
-                else:
-                    added = node['value']
-    return {'removed': removed, 'added': added}
+            if node['type'] == 'complex':
+                updated[node['badge']] = '[complex value]'
+            else:
+                updated[node['badge']] = node['value']
+    return updated
 
 
 def encode_to_json_type(value):  # noqa: WPS110
@@ -94,8 +89,8 @@ def plain_formater(diff):
                     updated_values = find_updated_values(nodes, node['name'])
                     output.append("Property '{0}' was updated. From {1} to {2}".format(
                         path,
-                        encode_to_json_type(updated_values['removed']),
-                        encode_to_json_type(updated_values['added']),
+                        encode_to_json_type(updated_values['-']),
+                        encode_to_json_type(updated_values['+']),
                     ))
             elif node['badge'] == '+':
                 if node['type'] == 'complex':
