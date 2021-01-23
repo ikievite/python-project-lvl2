@@ -3,9 +3,6 @@
 """module finds diff from two files."""
 
 
-from pprint import pprint
-
-
 def find_diff(file1, file2):
     """Func find diff items.
 
@@ -81,20 +78,12 @@ def find_diff(file1, file2):
     for key in file2.keys():  # noqa: WPS440
         if key not in file1:
             if isinstance(file2.get(key), dict):
-                if len(file2[key]) == 1:
-                    diff.append({
-                        'name': key,
-                        'type': 'complex',
-                        'badge': '+',
-                        'value': file2[key],
-                    })
-                else:
-                    diff.append({
-                        'name': key,
-                        'type': 'complex',
-                        'badge': '+',
-                        'value': file2[key],
-                    })
+                diff.append({
+                    'name': key,
+                    'type': 'complex',
+                    'badge': '+',
+                    'value': file2[key],
+                })
             else:
                 diff.append({
                     'name': key,
