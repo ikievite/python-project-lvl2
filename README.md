@@ -6,6 +6,10 @@
 
 ### Python Project "gendiff". Level 2
 
+Features:
+ - supports different input formats: yaml, json
+ - generating a report in plain text, stylish and json formats
+
 Example: Run gendiff
 [![asciicast](https://asciinema.org/a/3awsblJyEGmNEYiJYq6NY7voT.svg)](https://asciinema.org/a/3awsblJyEGmNEYiJYq6NY7voT)
 
