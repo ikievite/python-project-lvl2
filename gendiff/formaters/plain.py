@@ -57,31 +57,32 @@ def plain_formater(diff):
     diff.sort(key=lambda node: node['name'])
     output = []
 
-    def iter_node(nodes, path):  # noqa: WPS430
+    def iter_node(nodes, parent):  # noqa: WPS430
         updated_nodes = []
         for node in nodes:  # noqa: WPS426, WPS442
-            node_path = path + '.' + node['name']  # noqa: WPS336
-            node_path = node_path[1:]
+            path = parent.split()
+            path.append(node['name'])
+            path = '.'.join(path)
             if node['type'] == 'nested':
                 node['children'].sort(key=lambda child: child['name'])
-                iter_node(node['children'], path + '.' + node['name'])  # noqa: WPS336
+                iter_node(node['children'], parent + ' ' + node['name'])  # noqa: WPS336
             elif isupdated(nodes, node['name']):
                 if node['name'] not in updated_nodes:
                     updated_nodes.append(node['name'])
                     updated_values = find_updated_values(nodes, node['name'])
                     output.append("Property '{0}' was updated. From '{1}' to '{2}'".format(
-                        node_path, updated_values['removed'], updated_values['added'],
+                        path, updated_values['removed'], updated_values['added'],
                     ))
             elif node['badge'] == '+':
                 if node['type'] == 'complex':
                     output.append("Property '{0}' was added with value: '[complex value]'".format(
-                        node_path,
+                        path,
                     ))
                 else:
                     output.append("Property '{0}' was added with value: '{1}'".format(
-                        node_path, node['value'],
+                        path, node['value'],
                     ))
             elif node['badge'] == '-':
-                output.append("Property '{0}' was removed".format(node_path))
+                output.append("Property '{0}' was removed".format(path))
         return '\n'.join(output)
     return iter_node(diff, '')
