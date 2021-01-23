@@ -3,6 +3,26 @@
 """module with stylish formater."""
 
 
+def encode_to_json_type(value):  # noqa: WPS110
+    """Func encodes value to json format.
+
+    Args:
+        value: value from node
+
+    Returns:
+        encoded value
+    """
+    if value is True:
+        node_value = 'true'
+    elif value is False:
+        node_value = 'false'
+    elif value is None:
+        node_value = 'null'
+    else:
+        return value
+    return node_value
+
+
 def stylish_formater(diff):
     """Func that display diff tree.
 
@@ -44,7 +64,7 @@ def stylish_formater(diff):
                 iter_complex(node['value'], depth)
             elif node['type'] == 'flat':
                 output.append('  {0}{1} {2}: {3}'.format(
-                    '  '*depth, node['badge'], node['name'], node['value'],
+                    '  '*depth, node['badge'], node['name'], encode_to_json_type(node['value']),
                 ))
         output.append('{0}{1}'.format('  '*depth, '}'))
         return '\n'.join(output)
