@@ -3,6 +3,9 @@
 """module finds diff from two files."""
 
 
+from pprint import pprint
+
+
 def find_diff(file1, file2):
     """Func find diff items.
 
@@ -19,20 +22,12 @@ def find_diff(file1, file2):
             value1 = file1.get(key)
             value2 = file2.get(key)
             if value1 == value2:
-                if isinstance(value1, dict) and isinstance(value2, dict):
-                    diff.append({
-                        'name': key,
-                        'type': 'nested',
-                        'badge': ' ',
-                        'children': find_diff(value1, value2),
-                    })
-                else:
-                    diff.append({
-                        'name': key,
-                        'type': 'flat',
-                        'badge': ' ',
-                        'value': value1,
-                    })
+                diff.append({
+                    'name': key,
+                    'type': 'flat',
+                    'badge': ' ',
+                    'value': value1,
+                })
             elif value1 != value2:
                 if isinstance(value1, dict) and isinstance(value2, dict):
                     diff.append({
@@ -49,31 +44,11 @@ def find_diff(file1, file2):
                             'badge': '-',
                             'value': value1,
                         })
-                    else:
-                        diff.append({
-                            'name': key,
-                            'type': 'nested',
-                            'badge': '-',
-                            'children': value1,
-                        })
                     diff.append({
                         'name': key,
                         'type': 'flat',
                         'badge': '+',
                         'value': value2,
-                    })
-                elif isinstance(value2, dict):
-                    diff.append({
-                        'name': key,
-                        'type': 'flat',
-                        'badge': '-',
-                        'value': value1,
-                    })
-                    diff.append({
-                        'name': key,
-                        'type': 'nested',
-                        'badge': '+',
-                        'children': value2,
                     })
                 else:
                     diff.append({
@@ -90,20 +65,12 @@ def find_diff(file1, file2):
                     })
         elif key not in file2.keys():
             if isinstance(file1[key], dict):
-                if len(file1[key]) == 1:
-                    diff.append({
-                        'name': key,
-                        'type': 'flat',
-                        'badge': '-',
-                        'value': file1[key],
-                    })
-                else:
-                    diff.append({
-                        'name': key,
-                        'type': 'complex',
-                        'badge': '-',
-                        'value': file1[key],
-                    })
+                diff.append({
+                    'name': key,
+                    'type': 'complex',
+                    'badge': '-',
+                    'value': file1[key],
+                })
             else:
                 diff.append({
                     'name': key,
