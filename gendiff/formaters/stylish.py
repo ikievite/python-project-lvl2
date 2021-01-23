@@ -68,7 +68,7 @@ def stylish_formater(diff):
 
                 def iter_complex(complex_node, depth):  # noqa: WPS430, WPS442
                     for node_key, node_value in complex_node.items():
-                        diff_comlex_line = '      {indent}  {key}: {vaue}'
+                        diff_comlex_line = '      {indent}  {key}: {value}'
                         if isinstance(node_value, dict):
                             output.append(diff_comlex_line.format(
                                 indent='  '*depth, key=node_key, value='{',
