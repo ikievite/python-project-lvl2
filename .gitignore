@@ -2,7 +2,14 @@
 __pycache__/
 *.swp
 *.pyc
+
+# Environments
 .venv/
+
+# Distribution / packaging
 dist/
 *.egg-info/
 
+# Coverage reports
+.coverage
+coverage.xml
