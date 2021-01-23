@@ -45,6 +45,28 @@ def find_updated_values(nodes, node_name):
     return {'removed': removed, 'added': added}
 
 
+def encode_to_json_type(value):  # noqa: WPS110
+    """Func encodes value to json format.
+
+    Args:
+        value: value from node
+
+    Returns:
+        encoded value
+    """
+    if value is True:
+        node_value = 'true'
+    elif value is False:
+        node_value = 'false'
+    elif value is None:
+        node_value = 'null'
+    elif value == '[complex value]':
+        return value
+    else:
+        node_value = "'{0}'".format(value)
+    return node_value
+
+
 def plain_formater(diff):
     """Func builds plain output from diff.
 
@@ -70,17 +92,19 @@ def plain_formater(diff):
                 if node['name'] not in updated_nodes:
                     updated_nodes.append(node['name'])
                     updated_values = find_updated_values(nodes, node['name'])
-                    output.append("Property '{0}' was updated. From '{1}' to '{2}'".format(
-                        path, updated_values['removed'], updated_values['added'],
+                    output.append("Property '{0}' was updated. From {1} to {2}".format(
+                        path,
+                        encode_to_json_type(updated_values['removed']),
+                        encode_to_json_type(updated_values['added']),
                     ))
             elif node['badge'] == '+':
                 if node['type'] == 'complex':
-                    output.append("Property '{0}' was added with value: '[complex value]'".format(
+                    output.append("Property '{0}' was added with value: [complex value]".format(
                         path,
                     ))
                 else:
-                    output.append("Property '{0}' was added with value: '{1}'".format(
-                        path, node['value'],
+                    output.append("Property '{0}' was added with value: {1}".format(
+                        path, encode_to_json_type(node['value']),
                     ))
             elif node['badge'] == '-':
                 output.append("Property '{0}' was removed".format(path))
