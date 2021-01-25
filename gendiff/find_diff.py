@@ -47,7 +47,6 @@ def find_diff(file1, file2):
                         'badge': '+',
                         'value': value2,
                     })
-                    '''
                 elif isinstance(value2, dict):
                     diff.append({
                         'name': key,
@@ -58,11 +57,10 @@ def find_diff(file1, file2):
                     if len(value2) == 1:
                         diff.append({
                             'name': key,
-                            'type': 'nested',
+                            'type': 'complex',
                             'badge': '+',
-                            'children': value2,
+                            'value': value2,
                         })
-                    '''
                 else:
                     diff.append({
                         'name': key,
