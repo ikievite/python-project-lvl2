@@ -49,13 +49,15 @@ def encode_to_json_type(value):  # noqa: WPS110
     Returns:
         encoded value
     """
-    if value is True:
+    if value is True:  # noqa: WPS223
         node_value = 'true'
     elif value is False:
         node_value = 'false'
     elif value is None:
         node_value = 'null'
     elif value == '[complex value]':
+        return value
+    elif isinstance(value, int):
         return value
     else:
         node_value = "'{0}'".format(value)
