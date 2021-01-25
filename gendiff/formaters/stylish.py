@@ -35,12 +35,13 @@ def diff_line(depth, node):
     """
     badge = node['badge']
     key = node['name']
+    indent = '  ' * depth
     if node['type'] == 'flat':
         value = encode_to_json_type(node['value'])
     else:
         value = '{'
     return '  {indent}{badge} {key}: {value}'.format(
-        indent='  '*depth, badge=badge, key=key, value=value,
+        indent=indent, badge=badge, key=key, value=value,
     )
 
 
