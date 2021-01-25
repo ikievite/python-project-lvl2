@@ -58,6 +58,7 @@ def stylish_formater(diff):
     output = ['{']
 
     def iter_node(nodes, depth):  # noqa: WPS430
+        indent = depth * '  '
         for node in nodes:  # noqa: WPS426
             if node['type'] == 'nested':
                 node['children'].sort(key=lambda child: child['name'])
@@ -70,19 +71,20 @@ def stylish_formater(diff):
                 def iter_complex(complex_node, depth):  # noqa: WPS430, WPS442
                     for node_key, node_value in complex_node.items():
                         diff_comlex_line = '      {indent}  {key}: {value}'
+                        complex_indent = '  ' * depth
                         if isinstance(node_value, dict):
                             output.append(diff_comlex_line.format(
-                                indent='  '*depth, key=node_key, value='{',
+                                indent=complex_indent, key=node_key, value='{',
                             ))
                             iter_complex(node_value, depth + 2)
                         else:
                             output.append(diff_comlex_line.format(
-                                indent='  '*depth, key=node_key, value=node_value,
+                                indent=complex_indent, key=node_key, value=node_value,
                             ))
-                    output.append('    {0}{1}'.format('  '*depth, '}'))
+                    output.append('    {0}{1}'.format(complex_indent, '}'))
                 iter_complex(node['value'], depth)
             elif node['type'] == 'flat':
                 output.append(diff_line(depth, node))
-        output.append('{0}{1}'.format('  '*depth, '}'))
+        output.append('{0}{1}'.format(indent, '}'))
         return '\n'.join(output)
     return iter_node(diff, 0)
