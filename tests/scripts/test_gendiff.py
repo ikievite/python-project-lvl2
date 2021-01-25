@@ -68,3 +68,11 @@ def test_generate_diff_nested_json_formater():
     file1 = 'tests/fixtures/nested1.json'
     file2 = 'tests/fixtures/nested2.json'
     assert generate_diff(file1, file2, 'json') == expected
+
+
+def test_generate_diff_nested_stylish_v2():
+    with open('tests/fixtures/diff_nested_stylish2.txt') as f:
+        expected = f.read().strip()
+    file1 = 'tests/fixtures/nested11.json'
+    file2 = 'tests/fixtures/nested21.json'
+    assert generate_diff(file1, file2) == expected
