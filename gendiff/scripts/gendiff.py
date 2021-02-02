@@ -36,10 +36,10 @@ def generate_diff(file1, file2, formater='stylish'):
 def main():
     """Run main func."""
     parser = argparse.ArgumentParser(description='Compares two json/yaml files and shows a diff.')
-    parser.add_argument('first_file', action='store')
-    parser.add_argument('second_file', action='store')
+    parser.add_argument('first_file')
+    parser.add_argument('second_file')
     parser.add_argument(
-        '-f', '--format', action='store', default='stylish', required=False,  # noqa: WPS317
+        '-f', '--format', default='stylish', required=False,  # noqa: WPS317
         dest='formater', help='set output format (default: "stylish")',
     )
     args = parser.parse_args()
