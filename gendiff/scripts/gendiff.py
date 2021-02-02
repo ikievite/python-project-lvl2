@@ -39,7 +39,7 @@ def main():
     parser.add_argument('first_file')
     parser.add_argument('second_file')
     parser.add_argument(
-        '-f', '--format', default='stylish', required=False,  # noqa: WPS317
+        '-f', '--format', default='stylish',  # noqa: WPS317
         dest='formater', help='set output format (default: "stylish")',
     )
     args = parser.parse_args()
