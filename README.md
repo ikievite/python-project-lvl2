@@ -16,6 +16,17 @@ Features:
  - supports different input formats: yaml, json
  - generating a report in plain text, stylish and json formats
 
+SYNOPSIS
+       gendiff [OPTION]... FILES
+
+Mandatory positional arguments: 
+       first_file
+       second_file
+
+Optional arguments:
+       -h, --help    display help and exit
+       -f, --format  set output format, posible fornats: stylish, plain, json (default: stylish)
+
 Example: Run gendiff
 [![asciicast](https://asciinema.org/a/3awsblJyEGmNEYiJYq6NY7voT.svg)](https://asciinema.org/a/3awsblJyEGmNEYiJYq6NY7voT)
 
