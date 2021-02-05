@@ -19,7 +19,7 @@ Features:
 SYNOPSIS
        gendiff [OPTION]... FILES
 
-Mandatory positional arguments:\\ 
+Mandatory positional arguments:  
        first_file
        second_file
 
