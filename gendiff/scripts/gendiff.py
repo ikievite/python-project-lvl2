@@ -5,11 +5,9 @@
 
 import argparse
 
-from gendiff.formaters.json import json_formater
-from gendiff.formaters.plain import plain_formater
-from gendiff.formaters.stylish import stylish_formater
 from gendiff.loader import loader
 from gendiff.find_diff import find_diff
+from gendiff.format_diff import format_diff
 
 
 def generate_diff(file1, file2, formater='stylish'):
@@ -25,12 +23,7 @@ def generate_diff(file1, file2, formater='stylish'):
     """
     content1, content2 = loader(file1), loader(file2)
     diff = find_diff(content1, content2)
-    if formater == 'stylish':
-        return stylish_formater(diff)
-    elif formater == 'plain':
-        return plain_formater(diff)
-    elif formater == 'json':
-        return json_formater(diff)
+    return format_diff(diff, formater)
 
 
 def main():
