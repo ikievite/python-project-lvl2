@@ -17,10 +17,18 @@ def format_diff(diff, formater):
 
     Returns:
         string with formated diff
+
+    Raises:
+        Exception: if wrong formater given
     """
-    if formater == 'stylish':
-        return stylish_formater(diff)
-    elif formater == 'plain':
-        return plain_formater(diff)
-    elif formater == 'json':
-        return json_formater(diff)
+    try:  # noqa: WPS229
+        if formater == 'stylish':
+            return stylish_formater(diff)
+        elif formater == 'plain':
+            return plain_formater(diff)
+        elif formater == 'json':
+            return json_formater(diff)
+        raise Exception("unsupported formater type '{}'".format(formater))  # noqa: P101
+    except Exception as e:  # noqa: WPS111
+        print('Exception: ' + str(e))  # noqa: WPS421, WPS336
+        raise
