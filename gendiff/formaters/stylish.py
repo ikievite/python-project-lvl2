@@ -3,6 +3,10 @@
 """module with stylish formater."""
 
 
+amount_of_indent = 4
+base_indent = ' ' * amount_of_indent
+
+
 def encode_to_json_type(value):  # noqa: WPS110
     """Func encodes value to json format.
 
@@ -35,13 +39,13 @@ def diff_line(depth, node):
     """
     badge = node['badge']
     key = node['name']
-    indent = '  ' * depth
+    indent = base_indent * depth
     if node['type'] == 'flat':
         value = encode_to_json_type(node['value'])
     else:
         value = '{'
-    return '  {indent}{badge} {key}: {value}'.format(
-        indent=indent, badge=badge, key=key, value=value,
+    return '{base_indent}{indent}{badge} {key}: {value}'.format(
+        base_indent=base_indent, indent=indent, badge=badge, key=key, value=value,
     )
 
 
@@ -58,12 +62,12 @@ def stylish_formater(diff):
     output = ['{']
 
     def iter_node(nodes, depth):  # noqa: WPS430
-        indent = depth * '  '
+        indent = depth * base_indent
         for node in nodes:  # noqa: WPS426
             if node['type'] == 'nested':
                 node['children'].sort(key=lambda child: child['name'])
                 output.append(diff_line(depth, node))
-                iter_node(node['children'], depth + 2)
+                iter_node(node['children'], depth + amount_of_indent)
 
             elif node['type'] == 'complex':
                 output.append(diff_line(depth, node))
@@ -71,12 +75,12 @@ def stylish_formater(diff):
                 def iter_complex(complex_node, depth):  # noqa: WPS430, WPS442
                     for node_key, node_value in complex_node.items():
                         diff_comlex_line = '      {indent}  {key}: {value}'
-                        complex_indent = '  ' * depth
+                        complex_indent = base_indent * depth
                         if isinstance(node_value, dict):
                             output.append(diff_comlex_line.format(
                                 indent=complex_indent, key=node_key, value='{',
                             ))
-                            iter_complex(node_value, depth + 2)
+                            iter_complex(node_value, depth + amount_of_indent)
                         else:
                             output.append(diff_comlex_line.format(
                                 indent=complex_indent, key=node_key, value=node_value,
