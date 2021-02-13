@@ -3,7 +3,7 @@
 """module with stylish formater."""
 
 
-amount_of_indent = 4
+amount_of_indent = 2
 base_indent = ' ' * amount_of_indent
 
 
@@ -74,8 +74,8 @@ def stylish_formater(diff):
 
                 def iter_complex(complex_node, depth):  # noqa: WPS430, WPS442
                     for node_key, node_value in complex_node.items():
-                        diff_comlex_line = '      {indent}  {key}: {value}'
-                        complex_indent = base_indent * depth
+                        diff_comlex_line = '    {indent}  {key}: {value}'
+                        complex_indent = base_indent * depth + base_indent
                         if isinstance(node_value, dict):
                             output.append(diff_comlex_line.format(
                                 indent=complex_indent, key=node_key, value='{',
@@ -85,7 +85,7 @@ def stylish_formater(diff):
                             output.append(diff_comlex_line.format(
                                 indent=complex_indent, key=node_key, value=node_value,
                             ))
-                    output.append('    {0}{1}'.format(complex_indent, '}'))
+                    output.append('{0}{1}{2}'.format(base_indent, complex_indent, '}'))
                 iter_complex(node['value'], depth)
             elif node['type'] == 'flat':
                 output.append(diff_line(depth, node))
