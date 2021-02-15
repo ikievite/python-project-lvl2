@@ -58,14 +58,13 @@ def stylish_formater(diff):
     Returns:
         output string
     """
-    diff.sort(key=lambda entry: entry['name'])
     output = ['{']
 
     def iter_node(nodes, depth):  # noqa: WPS430
+        nodes.sort(key=lambda entry: entry['name'])
         indent = depth * base_indent
         for node in nodes:  # noqa: WPS426
             if node['type'] == 'nested':
-                node['children'].sort(key=lambda child: child['name'])
                 output.append(diff_line(depth, node))
                 iter_node(node['children'], depth + amount_of_indent)
 
