@@ -49,6 +49,33 @@ def diff_line(depth, node):
     )
 
 
+def iter_complex(result, complex_node, depth):  # noqa: WPS430, WPS442
+    """Func prepare output for complex node.
+
+    Args:
+        result: list with output
+        complex_node: value of node
+        depth: level of indentation
+
+    Returns:
+        list with stylish complex output
+    """
+    for node_key, node_value in complex_node.items():
+        diff_comlex_line = '    {indent}  {key}: {value}'
+        complex_indent = base_indent * depth + base_indent
+        if isinstance(node_value, dict):
+            result.append(diff_comlex_line.format(
+                indent=complex_indent, key=node_key, value='{',
+            ))
+            iter_complex(result, node_value, depth + amount_of_indent)
+        else:
+            result.append(diff_comlex_line.format(
+                indent=complex_indent, key=node_key, value=node_value,
+            ))
+    result.append('{0}{1}{2}'.format(base_indent, complex_indent, '}'))
+    return result
+
+
 def stylish_formater(diff):
     """Func that display diff tree.
 
@@ -67,25 +94,9 @@ def stylish_formater(diff):
             if node['type'] == 'nested':
                 output.append(diff_line(depth, node))
                 iter_node(node['children'], depth + amount_of_indent)
-
             elif node['type'] == 'complex':
                 output.append(diff_line(depth, node))
-
-                def iter_complex(complex_node, depth):  # noqa: WPS430, WPS442
-                    for node_key, node_value in complex_node.items():
-                        diff_comlex_line = '    {indent}  {key}: {value}'
-                        complex_indent = base_indent * depth + base_indent
-                        if isinstance(node_value, dict):
-                            output.append(diff_comlex_line.format(
-                                indent=complex_indent, key=node_key, value='{',
-                            ))
-                            iter_complex(node_value, depth + amount_of_indent)
-                        else:
-                            output.append(diff_comlex_line.format(
-                                indent=complex_indent, key=node_key, value=node_value,
-                            ))
-                    output.append('{0}{1}{2}'.format(base_indent, complex_indent, '}'))
-                iter_complex(node['value'], depth)
+                output.extend(iter_complex([], node['value'], depth))
             elif node['type'] == 'flat':
                 output.append(diff_line(depth, node))
         output.append('{0}{1}'.format(indent, '}'))
