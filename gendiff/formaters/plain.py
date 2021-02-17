@@ -73,17 +73,16 @@ def plain_formater(diff):
     Returns:
         output: formated diff
     """
-    diff.sort(key=lambda node: node['name'])
     output = []
 
     def iter_node(nodes, parent):  # noqa: WPS430
+        nodes.sort(key=lambda node: node['name'])
         updated_nodes = []
-        for node in nodes:  # noqa: WPS426, WPS442
+        for node in nodes:  # noqa: WPS426, WPS440, WPS442
             path = parent.split()
             path.append(node['name'])
             path = '.'.join(path)
             if node['type'] == 'nested':
-                node['children'].sort(key=lambda child: child['name'])
                 iter_node(node['children'], parent + ' ' + node['name'])  # noqa: WPS336
             elif isupdated(nodes, node['name']):
                 if node['name'] not in updated_nodes:
