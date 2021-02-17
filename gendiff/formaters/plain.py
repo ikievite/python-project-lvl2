@@ -79,30 +79,31 @@ def plain_formater(diff):
         nodes.sort(key=lambda node: node['name'])
         updated_nodes = []
         for node in nodes:  # noqa: WPS426, WPS440, WPS442
-            path = parent.split()
+            path = []
+            path.extend(parent)
             path.append(node['name'])
-            path = '.'.join(path)
+            joined_path = '.'.join(path)
             if node['type'] == 'nested':
-                iter_node(node['children'], parent + ' ' + node['name'])  # noqa: WPS336
+                iter_node(node['children'], path)  # noqa: WPS336
             elif isupdated(nodes, node['name']):
                 if node['name'] not in updated_nodes:
                     updated_nodes.append(node['name'])
                     updated_values = find_updated_values(nodes, node['name'])
                     output.append("Property '{0}' was updated. From {1} to {2}".format(
-                        path,
+                        joined_path,
                         encode_to_json_type(updated_values['-']),
                         encode_to_json_type(updated_values['+']),
                     ))
             elif node['badge'] == '+':
                 if node['type'] == 'complex':
                     output.append("Property '{0}' was added with value: [complex value]".format(
-                        path,
+                       joined_path,
                     ))
                 else:
                     output.append("Property '{0}' was added with value: {1}".format(
-                        path, encode_to_json_type(node['value']),
+                        joined_path, encode_to_json_type(node['value']),
                     ))
             elif node['badge'] == '-':
-                output.append("Property '{0}' was removed".format(path))
+                output.append("Property '{0}' was removed".format(joined_path))
         return '\n'.join(output)
-    return iter_node(diff, '')
+    return iter_node(diff, [])
