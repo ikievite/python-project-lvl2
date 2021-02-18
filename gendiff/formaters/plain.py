@@ -97,7 +97,7 @@ def plain_formater(diff):
             elif node['badge'] == '+':
                 if node['type'] == 'complex':
                     output.append("Property '{0}' was added with value: [complex value]".format(
-                       joined_path,
+                        joined_path,
                     ))
                 else:
                     output.append("Property '{0}' was added with value: {1}".format(
