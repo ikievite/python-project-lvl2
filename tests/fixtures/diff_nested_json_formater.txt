@@ -5,12 +5,6 @@
         "badge": " ",
         "children": [
             {
-                "name": "follow",
-                "type": "flat",
-                "badge": "+",
-                "value": false
-            },
-            {
                 "name": "setting1",
                 "type": "flat",
                 "badge": " ",
@@ -35,24 +29,16 @@
                 "value": null
             },
             {
-                "name": "setting4",
-                "type": "flat",
-                "badge": "+",
-                "value": "blah blah"
-            },
-            {
-                "name": "setting5",
-                "type": "complex",
-                "badge": "+",
-                "value": {
-                    "key5": "value5"
-                }
-            },
-            {
                 "name": "setting6",
                 "type": "nested",
                 "badge": " ",
                 "children": [
+                    {
+                        "name": "key",
+                        "type": "flat",
+                        "badge": " ",
+                        "value": "value"
+                    },
                     {
                         "name": "doge",
                         "type": "nested",
@@ -73,18 +59,32 @@
                         ]
                     },
                     {
-                        "name": "key",
-                        "type": "flat",
-                        "badge": " ",
-                        "value": "value"
-                    },
-                    {
                         "name": "ops",
                         "type": "flat",
                         "badge": "+",
                         "value": "vops"
                     }
                 ]
+            },
+            {
+                "name": "follow",
+                "type": "flat",
+                "badge": "+",
+                "value": false
+            },
+            {
+                "name": "setting4",
+                "type": "flat",
+                "badge": "+",
+                "value": "blah blah"
+            },
+            {
+                "name": "setting5",
+                "type": "complex",
+                "badge": "+",
+                "value": {
+                    "key5": "value5"
+                }
             }
         ]
     },
