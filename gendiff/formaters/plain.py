@@ -3,6 +3,10 @@
 """module with plain formater."""
 
 
+from gendiff.find_diff import NESTED_TYPE, COMPLEX_TYPE  # noqa: I001
+from gendiff.find_diff import ADDED_BADGE, REMOVED_BADGE  # noqa: I001
+
+
 def isupdated(nodes, node_name):
     """Func checks if the value has been updated.
 
@@ -33,7 +37,7 @@ def find_updated_values(nodes, node_name):
     updated = {}
     for node in nodes:
         if node['name'] == node_name:
-            if node['type'] == 'complex':
+            if node['type'] == COMPLEX_TYPE:
                 updated[node['badge']] = '[complex value]'
             else:
                 updated[node['badge']] = node['value']
@@ -83,7 +87,7 @@ def plain_formater(diff):
             path.extend(parent)
             path.append(node['name'])
             joined_path = '.'.join(path)
-            if node['type'] == 'nested':
+            if node['type'] == NESTED_TYPE:
                 iter_node(node['children'], path)  # noqa: WPS336
             elif isupdated(nodes, node['name']):
                 if node['name'] not in updated_nodes:
@@ -94,8 +98,8 @@ def plain_formater(diff):
                         encode_to_json_type(updated_values['-']),
                         encode_to_json_type(updated_values['+']),
                     ))
-            elif node['badge'] == '+':
-                if node['type'] == 'complex':
+            elif node['badge'] == ADDED_BADGE:
+                if node['type'] == COMPLEX_TYPE:
                     output.append("Property '{0}' was added with value: [complex value]".format(
                         joined_path,
                     ))
@@ -103,7 +107,7 @@ def plain_formater(diff):
                     output.append("Property '{0}' was added with value: {1}".format(
                         joined_path, encode_to_json_type(node['value']),
                     ))
-            elif node['badge'] == '-':
+            elif node['badge'] == REMOVED_BADGE:
                 output.append("Property '{0}' was removed".format(joined_path))
         return '\n'.join(output)
     return iter_node(diff, [])
