@@ -3,6 +3,8 @@
 """module with stylish formater."""
 
 
+from gendiff.find_diff import FLAT_TYPE, NESTED_TYPE, COMPLEX_TYPE  # noqa: I001
+
 amount_of_indent = 2
 base_indent = ' ' * amount_of_indent
 
@@ -40,7 +42,7 @@ def diff_line(depth, node):
     badge = node['badge']
     key = node['name']
     indent = base_indent * depth
-    if node['type'] == 'flat':
+    if node['type'] == FLAT_TYPE:
         value = encode_to_json_type(node['value'])
     else:
         value = '{'
@@ -91,13 +93,13 @@ def stylish_formater(diff):
         nodes.sort(key=lambda entry: entry['name'])
         indent = depth * base_indent
         for node in nodes:  # noqa: WPS426
-            if node['type'] == 'nested':
+            if node['type'] == NESTED_TYPE:
                 output.append(diff_line(depth, node))
                 iter_node(node['children'], depth + amount_of_indent)
-            elif node['type'] == 'complex':
+            elif node['type'] == COMPLEX_TYPE:
                 output.append(diff_line(depth, node))
                 output.extend(iter_complex([], node['value'], depth))
-            elif node['type'] == 'flat':
+            elif node['type'] == FLAT_TYPE:
                 output.append(diff_line(depth, node))
         output.append('{0}{1}'.format(indent, '}'))
         return '\n'.join(output)
