@@ -22,13 +22,11 @@ def loader(filename):
     """
     filename = filename.lower()
     try:
-        if 'json' in filename:
-            with open(filename) as json_file:
-                return json.load(json_file)
-        elif 'yaml' in filename or 'yml' in filename:
-            with open(filename) as yaml_file:
-                return yaml.safe_load(yaml_file)
-        else:
+        with open(filename) as f:  # noqa: WPS111
+            if 'json' in filename:
+                return json.load(f)
+            elif 'yaml' in filename or 'yml' in filename:
+                return yaml.safe_load(f)
             raise Exception('Wrong file type, neither json nor yaml/yml')
     except Exception:  # noqa: WPS329
         raise
