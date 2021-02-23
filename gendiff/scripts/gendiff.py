@@ -38,9 +38,12 @@ def main():
         dest='formater', help='set output format (default: "{0}")'.format(CHOICE_STYLISH),
     )
     args = parser.parse_args()
-    diff = generate_diff(args.first_file, args.second_file, args.formater)
+    try:  # noqa: WPS229
+        diff = generate_diff(args.first_file, args.second_file, args.formater)
 
-    print(diff)  # noqa: WPS421
+        print(diff)  # noqa: WPS421
+    except Exception as e:  # noqa: WPS111
+        print('Exception: {0}'.format(str(e)))  # noqa: WPS421
 
 
 if __name__ == '__main__':
