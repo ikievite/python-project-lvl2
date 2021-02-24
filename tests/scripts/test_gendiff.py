@@ -2,7 +2,7 @@
 
 ''' Tests for gendiff project.'''
 
-
+import pytest
 from gendiff.scripts.gendiff import generate_diff
 
 
@@ -54,20 +54,17 @@ def test_generate_diff_nested_stylish_yaml():
     assert generate_diff(file1, file2) == expected
 
 
-def test_generate_diff_nested_plain():
-    with open('tests/fixtures/diff_nested_plain.txt') as f:
-        expected = f.read().strip()
-    file1 = 'tests/fixtures/nested1.json'
-    file2 = 'tests/fixtures/nested2.json'
-    assert generate_diff(file1, file2, 'plain') == expected
+files = [('tests/fixtures/nested1.json',
+          'tests/fixtures/nested2.json')]
+formaters_results = [('plain', 'tests/fixtures/diff_nested_plain.txt'),
+                     ('json', 'tests/fixtures/diff_nested_json_formater.txt')]
 
-
-def test_generate_diff_nested_json_formater():
-    with open('tests/fixtures/diff_nested_json_formater.txt') as f:
+@pytest.mark.parametrize("file1,file2", files)
+@pytest.mark.parametrize("formater,diff", formaters_results)
+def test_generate_diff_nested_st_pl_js(file1, file2, formater, diff):
+    with open(diff) as f:
         expected = f.read().strip()
-    file1 = 'tests/fixtures/nested1.json'
-    file2 = 'tests/fixtures/nested2.json'
-    assert generate_diff(file1, file2, 'json') == expected
+    assert generate_diff(file1, file2, formater) == expected
 
 
 def test_generate_diff_nested_stylish_v2():
