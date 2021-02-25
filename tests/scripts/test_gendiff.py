@@ -23,14 +23,6 @@ def test_generate_diff_flat(file1, file2, result):
     assert generate_diff(file1, file2) == expected
 
 
-def test_generate_diff_flat_stylish():
-    with open('tests/fixtures/diff_flat.txt') as f:
-        expected = f.read().strip()
-    file1 = 'tests/fixtures/flat1.json'
-    file2 = 'tests/fixtures/flat2.json'
-    assert generate_diff(file1, file2, 'stylish') == expected
-
-
 test_nested_data = [('tests/fixtures/nested1.json',
                      'tests/fixtures/nested2.json'),
                     ('tests/fixtures/nested1.yaml',
@@ -49,7 +41,8 @@ def test_generate_diff_nested(file1, file2, result):
 files = [('tests/fixtures/nested1.json',
           'tests/fixtures/nested2.json')]
 nested_formaters_results = [('plain', 'tests/fixtures/diff_nested_plain.txt'),
-                            ('json', 'tests/fixtures/diff_nested_json_formater.txt')]
+                            ('json', 'tests/fixtures/diff_nested_json_formater.txt'),
+                            ('stylish', 'tests/fixtures/diff_nested_stylish.txt')]
 
 
 @pytest.mark.parametrize("file1,file2", files)
