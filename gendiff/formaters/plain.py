@@ -80,9 +80,8 @@ def plain_formater(diff):
     output = []
 
     def iter_node(nodes, parent):  # noqa: WPS430
-        nodes.sort(key=lambda node: node['name'])
         updated_nodes = []
-        for node in nodes:  # noqa: WPS426, WPS440, WPS442
+        for node in sorted(nodes, key=lambda node: node['name']):  # noqa: WPS426, WPS440, WPS442
             path = []
             path.extend(parent)
             path.append(node['name'])
