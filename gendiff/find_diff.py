@@ -31,26 +31,26 @@ def find_diff(dict1, dict2):
             if value1 == value2:
                 diff.append({
                     'name': key,
-                    'badge': UNCHANGED_BADGE,
+                    'state': 'UNCHANGED',
                     'value': value2,
                 })
             else:  # noqa: WPS513
                 if isinstance(value1, dict) and isinstance(value2, dict):
                     diff.append({
                         'name': key,
-                        'badge': UNCHANGED_BADGE,
+                        'state': 'UNCHANGED',
                         'children': find_diff(value1, value2),
                     })
                 else:
                     diff.append({
                         'name': key,
-                        'badge': CHANGED_BADGE,
+                        'state': 'CHANGED',
                         'value': [value1, value2],
                     })
         else:
             diff.append({
                 'name': key,
-                'badge': ADDED_BADGE,
+                'state': 'ADDED',
                 'value': value2,
             })
     for key in dict1.keys():  # noqa: WPS440
@@ -58,7 +58,7 @@ def find_diff(dict1, dict2):
         if key not in dict2.keys():
             diff.append({
                 'name': key,
-                'badge': REMOVED_BADGE,
+                'state': 'REMOVED',
                 'value': value1,
             })
 
