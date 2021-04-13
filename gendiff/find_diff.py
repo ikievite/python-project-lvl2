@@ -31,19 +31,18 @@ def find_diff(dict1, dict2):
                     'state': UNCHANGED,
                     'value': value2,
                 })
-            else:  # noqa: WPS513 # ignore implicit `elif` condition
-                if isinstance(value1, dict) and isinstance(value2, dict):
-                    diff.append({
-                        'name': key,
-                        'state': UNCHANGED,
-                        'children': find_diff(value1, value2),
-                    })
-                else:
-                    diff.append({
-                        'name': key,
-                        'state': CHANGED,
-                        'value': {REMOVED: value1, ADDED: value2},
-                    })
+            elif isinstance(value1, dict) and isinstance(value2, dict):
+                diff.append({
+                    'name': key,
+                    'state': UNCHANGED,
+                    'children': find_diff(value1, value2),
+                })
+            else:
+                diff.append({
+                    'name': key,
+                    'state': CHANGED,
+                    'value': {REMOVED: value1, ADDED: value2},
+                })
         else:
             diff.append({
                 'name': key,
