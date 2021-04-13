@@ -25,14 +25,14 @@ def format_diff(diff, formater):
     Raises:
         Exception: if wrong formater given
     """
-    try:  # noqa: WPS229
+    try:  # noqa: WPS229 # ignore too long ``try`` body length
         if formater == CHOICE_STYLISH:
             return stylish_formater(diff)
         elif formater == CHOICE_PLAIN:
             return plain_formater(diff)
         elif formater == CHOICE_JSON:
             return json_formater(diff)
-        raise Exception("unsupported formater type '{}'".format(formater))  # noqa: P101
-    except Exception as e:  # noqa: WPS111
-        print('Exception: ' + str(e))  # noqa: WPS421, WPS336
+        raise Exception("unsupported formater type '{0}'".format(formater))
+    except Exception as e:  # noqa: WPS111 # ignore too short name
+        print('Exception: ' + str(e))  # noqa: WPS421, WPS336 # allow print, ignore string concat
         raise
