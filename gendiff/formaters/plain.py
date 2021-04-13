@@ -3,44 +3,10 @@
 """module with plain formater."""
 
 
-def isupdated(nodes, node_name):
-    """Func checks if the value has been updated.
-
-    Args:
-        nodes: list with nodes
-        node_name: name of node
-
-    Returns:
-        bool value
-    """
-    node_list = []
-    for node in nodes:
-        node_list.append(node['name'])
-    if node_list.count(node_name) == 2:
-        return True
+from gendiff.find_diff import ADDED, CHANGED, REMOVED
 
 
-def find_updated_values(nodes, node_name):
-    """Func finds updated values.
-
-    Args:
-        nodes: list with nodes
-        node_name: name of node
-
-    Returns:
-        dict with values
-    """
-    updated = {}
-    for node in nodes:
-        if node['name'] == node_name:
-            if node['type'] == 'complex':
-                updated[node['badge']] = '[complex value]'
-            else:
-                updated[node['badge']] = node['value']
-    return updated
-
-
-def encode_to_json_type(value):  # noqa: WPS110
+def encode_to_json_type(value):  # noqa: WPS110 # ignore warning about var name
     """Func encodes value to json format.
 
     Args:
@@ -49,16 +15,16 @@ def encode_to_json_type(value):  # noqa: WPS110
     Returns:
         encoded value
     """
-    if value is True:  # noqa: WPS223
+    if value is True:  # noqa: WPS223 # ignore too many `elif`
         node_value = 'true'
     elif value is False:
         node_value = 'false'
     elif value is None:
         node_value = 'null'
-    elif value == '[complex value]':
-        return value
     elif isinstance(value, int):
         return value
+    elif isinstance(value, dict):
+        node_value = '[complex value]'
     else:
         node_value = "'{0}'".format(value)
     return node_value
@@ -73,37 +39,34 @@ def plain_formater(diff):
     Returns:
         output: formated diff
     """
-    diff.sort(key=lambda node: node['name'])
     output = []
 
-    def iter_node(nodes, parent):  # noqa: WPS430
-        updated_nodes = []
-        for node in nodes:  # noqa: WPS426, WPS442
-            path = parent.split()
+    def iter_node(nodes, parent):  # noqa: WPS430 # ignore warn about nested function
+        for node in sorted(nodes, key=lambda node: node['name']):  # noqa: WPS440 # var overlap
+            path = []
+            path.extend(parent)
             path.append(node['name'])
-            path = '.'.join(path)
-            if node['type'] == 'nested':
-                node['children'].sort(key=lambda child: child['name'])
-                iter_node(node['children'], parent + ' ' + node['name'])  # noqa: WPS336
-            elif isupdated(nodes, node['name']):
-                if node['name'] not in updated_nodes:
-                    updated_nodes.append(node['name'])
-                    updated_values = find_updated_values(nodes, node['name'])
-                    output.append("Property '{0}' was updated. From {1} to {2}".format(
-                        path,
-                        encode_to_json_type(updated_values['-']),
-                        encode_to_json_type(updated_values['+']),
-                    ))
-            elif node['badge'] == '+':
-                if node['type'] == 'complex':
+            joined_path = '.'.join(path)
+            if 'children' in node.keys():
+                iter_node(node['children'], path)
+            elif node['state'] == CHANGED:
+                removed_value = encode_to_json_type(node['value'][REMOVED])
+                added_value = encode_to_json_type(node['value'][ADDED])
+                output.append("Property '{0}' was updated. From {1} to {2}".format(
+                    joined_path,
+                    removed_value,
+                    added_value,
+                ))
+            elif node['state'] == ADDED:
+                if isinstance(node['value'], dict):
                     output.append("Property '{0}' was added with value: [complex value]".format(
-                        path,
+                        joined_path,
                     ))
                 else:
                     output.append("Property '{0}' was added with value: {1}".format(
-                        path, encode_to_json_type(node['value']),
+                        joined_path, encode_to_json_type(node['value']),
                     ))
-            elif node['badge'] == '-':
-                output.append("Property '{0}' was removed".format(path))
+            elif node['state'] == REMOVED:
+                output.append("Property '{0}' was removed".format(joined_path))
         return '\n'.join(output)
-    return iter_node(diff, '')
+    return iter_node(diff, [])

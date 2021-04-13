@@ -11,7 +11,7 @@ build:
 	poetry build
 
 package-install:
-	python3.8 -m pip install --user dist/*.whl
+	python3 -m pip install --user dist/*.whl
 
 test:
 	poetry run pytest --cov=gendiff --cov-report xml tests/
