@@ -82,34 +82,32 @@ def stylish_formater(diff):
     def iter_node(nodes, depth):  # noqa: WPS430 # ignore warning about nested function
         for node in sorted(nodes, key=lambda node: node['name']):  # noqa: WPS440 # var overlap
             current_indent = depth * indent * ' '
-            if node['state'] == UNCHANGED:
+            if 'children' in node.keys():  # noqa: WPS223 # ignore quantity `elif` branches
+                output.append(diff_line.format(
+                    indent=current_indent,
+                    key=node['name'],
+                    value='{',
+                ))
+                iter_node(node['children'], depth + 1)
+            elif node['state'] == CHANGED:
+                output.append(changed_value.format(
+                    indent=current_indent[:-2],
+                    key=node['name'],
+                    removed_value=encode_to_json_type(node['value'][REMOVED], depth),
+                    added_value=encode_to_json_type(node['value'][ADDED], depth),
+                ))
+            elif node['state'] == UNCHANGED:
                 badge = ' '
             elif node['state'] == ADDED:
                 badge = '+'
             elif node['state'] == REMOVED:
                 badge = '-'
-            if 'children' in node.keys():
-                output.append(diff_line.format(
-                    indent='{0}{1} '.format(current_indent[:-2], badge),
-                    key=node['name'],
-                    value='{',
-                ))
-                iter_node(node['children'], depth + 1)
-            else:
-                if node['state'] == CHANGED:  # noqa: WPS513 # ignore implicit `elif`
-                    output.append(changed_value.format(
-                        indent=current_indent[:-2],
-                        key=node['name'],
-                        removed_value=encode_to_json_type(node['value'][REMOVED], depth),
-                        added_value=encode_to_json_type(node['value'][ADDED], depth),
-                    ))
-                else:
-                    value = encode_to_json_type(node['value'], depth)
-                    output.append(diff_line.format(
-                        key=node['name'],
-                        value=value,
-                        indent='{0}{1} '.format(current_indent[:-2], badge),
-                    ))
+            value = encode_to_json_type(node['value'], depth)
+            output.append(diff_line.format(
+                key=node['name'],
+                value=value,
+                indent='{0}{1} '.format(current_indent[:-2], badge),
+            ))
         output.append('{indent}{value}'.format(
             indent=(depth - 1) * indent * ' ',
             value='}',
