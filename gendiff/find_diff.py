@@ -3,13 +3,10 @@
 """module finds diff from two files."""
 
 
-FLAT_TYPE = 'flat'
-NESTED_TYPE = 'nested'
-COMPLEX_TYPE = 'complex'
-UNCHANGED_BADGE = ' '
-ADDED_BADGE = '+'
-REMOVED_BADGE = '-'
-CHANGED_BADGE = '+-'
+ADDED = 'ADDED'
+REMOVED = 'REMOVED'
+CHANGED = 'CHANGED'
+UNCHANGED = 'UNCHANGED'
 
 
 def find_diff(dict1, dict2):
@@ -31,34 +28,34 @@ def find_diff(dict1, dict2):
             if value1 == value2:
                 diff.append({
                     'name': key,
-                    'state': 'UNCHANGED',
+                    'state': UNCHANGED,
                     'value': value2,
                 })
-            else:  # noqa: WPS513
+            else:  # noqa: WPS513 # ignore implicit `elif` condition
                 if isinstance(value1, dict) and isinstance(value2, dict):
                     diff.append({
                         'name': key,
-                        'state': 'UNCHANGED',
+                        'state': UNCHANGED,
                         'children': find_diff(value1, value2),
                     })
                 else:
                     diff.append({
                         'name': key,
-                        'state': 'CHANGED',
-                        'value': [value1, value2],
+                        'state': CHANGED,
+                        'value': {REMOVED: value1, ADDED: value2},
                     })
         else:
             diff.append({
                 'name': key,
-                'state': 'ADDED',
+                'state': ADDED,
                 'value': value2,
             })
-    for key in dict1.keys():  # noqa: WPS440
+    for key in dict1.keys():  # noqa: WPS440 # ignore var overlap
         value1 = dict1.get(key)
         if key not in dict2.keys():
             diff.append({
                 'name': key,
-                'state': 'REMOVED',
+                'state': REMOVED,
                 'value': value1,
             })
 
