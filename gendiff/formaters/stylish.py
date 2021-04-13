@@ -62,7 +62,7 @@ def iter_complex(result, complex_value, depth):
                 value=value,
             ))
     result.append('{indent}{value}'.format(
-        indent=depth*indent*' ',
+        indent=depth * indent * ' ',
         value='}',
     ))
     return result
