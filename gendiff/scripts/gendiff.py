@@ -34,16 +34,16 @@ def main():
     parser.add_argument('second_file')
     parser.add_argument(
         '-f', '--format', choices=[CHOICE_STYLISH, CHOICE_PLAIN, CHOICE_JSON],
-        default=CHOICE_STYLISH,  # noqa: WPS317
+        default=CHOICE_STYLISH,
         dest='formater', help='set output format (default: "{0}")'.format(CHOICE_STYLISH),
     )
     args = parser.parse_args()
-    try:  # noqa: WPS229
+    try:  # noqa: WPS229 # allow long ``try`` body length
         diff = generate_diff(args.first_file, args.second_file, args.formater)
 
-        print(diff)  # noqa: WPS421
-    except Exception as e:  # noqa: WPS111
-        print('Exception: {0}'.format(str(e)))  # noqa: WPS421
+        print(diff)  # noqa: WPS421 # allow print call
+    except Exception as e:  # noqa: WPS111 # ignore warning about to short name
+        print('Exception: {0}'.format(str(e)))  # noqa: WPS421, ignore warning about print call
 
 
 if __name__ == '__main__':
