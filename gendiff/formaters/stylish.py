@@ -96,18 +96,19 @@ def stylish_formater(diff):
                     removed_value=encode_to_json_type(node['value'][REMOVED], depth),
                     added_value=encode_to_json_type(node['value'][ADDED], depth),
                 ))
-            elif node['state'] == UNCHANGED:
-                badge = ' '
-            elif node['state'] == ADDED:
-                badge = '+'
-            elif node['state'] == REMOVED:
-                badge = '-'
-            value = encode_to_json_type(node['value'], depth)
-            output.append(diff_line.format(
-                key=node['name'],
-                value=value,
-                indent='{0}{1} '.format(current_indent[:-2], badge),
-            ))
+            else:
+                if node['state'] == UNCHANGED:  # noqa: WPS513 # implicit `elif`
+                    badge = ' '
+                elif node['state'] == ADDED:
+                    badge = '+'
+                elif node['state'] == REMOVED:
+                    badge = '-'
+                value = encode_to_json_type(node['value'], depth)
+                output.append(diff_line.format(
+                    key=node['name'],
+                    value=value,
+                    indent='{0}{1} '.format(current_indent[:-2], badge),
+                ))
         output.append('{indent}{value}'.format(
             indent=(depth - 1) * indent * ' ',
             value='}',
