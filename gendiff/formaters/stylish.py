@@ -68,6 +68,26 @@ def iter_complex(result, complex_value, depth):
     return result
 
 
+def format_line(badge, depth, node):
+    """Func returns formatted string.
+
+    Args:
+        badge: badge
+        depth: depth
+        node: node
+
+    Returns:
+        diff string
+    """
+    current_indent = depth * indent * ' '
+    value = encode_to_json_type(node['value'], depth)
+    return diff_line.format(
+        key=node['name'],
+        value=value,
+        indent='{0}{1} '.format(current_indent[:-2], badge),
+    )
+
+
 def stylish_formater(diff):
     """Func that display diff tree.
 
@@ -96,19 +116,15 @@ def stylish_formater(diff):
                     removed_value=encode_to_json_type(node['value'][REMOVED], depth),
                     added_value=encode_to_json_type(node['value'][ADDED], depth),
                 ))
-            else:
-                if node['state'] == UNCHANGED:  # noqa: WPS513 # implicit `elif`
-                    badge = ' '
-                elif node['state'] == ADDED:
-                    badge = '+'
-                elif node['state'] == REMOVED:
-                    badge = '-'
-                value = encode_to_json_type(node['value'], depth)
-                output.append(diff_line.format(
-                    key=node['name'],
-                    value=value,
-                    indent='{0}{1} '.format(current_indent[:-2], badge),
-                ))
+            elif node['state'] == UNCHANGED:  # noqa: WPS513 # implicit `elif`
+                badge = ' '
+                output.append(format_line(badge, depth, node))
+            elif node['state'] == ADDED:
+                badge = '+'
+                output.append(format_line(badge, depth, node))
+            elif node['state'] == REMOVED:
+                badge = '-'
+                output.append(format_line(badge, depth, node))
         output.append('{indent}{value}'.format(
             indent=(depth - 1) * indent * ' ',
             value='}',
