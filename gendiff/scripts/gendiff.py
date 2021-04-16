@@ -5,10 +5,9 @@
 
 import argparse
 
-from gendiff.loader import loader
 from gendiff.find_diff import find_diff
-from gendiff.format_diff import format_diff
-from gendiff.format_diff import CHOICE_STYLISH, CHOICE_PLAIN, CHOICE_JSON
+from gendiff.format_diff import CHOICE_JSON, CHOICE_PLAIN, CHOICE_STYLISH, format_diff
+from gendiff.loader import loader
 
 
 def generate_diff(file1, file2, formater='stylish'):
@@ -33,9 +32,12 @@ def main():
     parser.add_argument('first_file')
     parser.add_argument('second_file')
     parser.add_argument(
-        '-f', '--format', choices=[CHOICE_STYLISH, CHOICE_PLAIN, CHOICE_JSON],
+        '-f',
+        '--format',
+        choices=[CHOICE_STYLISH, CHOICE_PLAIN, CHOICE_JSON],
         default=CHOICE_STYLISH,
-        dest='formater', help='set output format (default: "{0}")'.format(CHOICE_STYLISH),
+        dest='formater',
+        help='set output format (default: "{0}")'.format(CHOICE_STYLISH),
     )
     args = parser.parse_args()
     try:  # noqa: WPS229 # allow long ``try`` body length
