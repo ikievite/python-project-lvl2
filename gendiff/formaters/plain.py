@@ -3,7 +3,7 @@
 """module with plain formater."""
 
 
-from gendiff.find_diff import ADDED, CHANGED, REMOVED
+from gendiff.find_diff import ADDED, CHANGED, NODE_NAME, NODE_STATE, NODE_VALUE, REMOVED
 
 
 def encode_to_json_type(value):  # noqa: WPS110 # ignore warning about var name
@@ -42,31 +42,31 @@ def plain_formater(diff):
     output = []
 
     def iter_node(nodes, parent):  # noqa: WPS430 # ignore warn about nested function
-        for node in sorted(nodes, key=lambda node: node['name']):  # noqa: WPS440 # var overlap
+        for node in sorted(nodes, key=lambda node: node[NODE_NAME]):  # noqa: WPS440 # var overlap
             path = []
             path.extend(parent)
-            path.append(node['name'])
+            path.append(node[NODE_NAME])
             joined_path = '.'.join(path)
             if 'children' in node.keys():
                 iter_node(node['children'], path)
             elif node['state'] == CHANGED:
-                removed_value = encode_to_json_type(node['value'][REMOVED])
-                added_value = encode_to_json_type(node['value'][ADDED])
+                removed_value = encode_to_json_type(node[NODE_VALUE][REMOVED])
+                added_value = encode_to_json_type(node[NODE_VALUE][ADDED])
                 output.append("Property '{0}' was updated. From {1} to {2}".format(
                     joined_path,
                     removed_value,
                     added_value,
                 ))
             elif node['state'] == ADDED:
-                if isinstance(node['value'], dict):
+                if isinstance(node[NODE_VALUE], dict):
                     output.append("Property '{0}' was added with value: [complex value]".format(
                         joined_path,
                     ))
                 else:
                     output.append("Property '{0}' was added with value: {1}".format(
-                        joined_path, encode_to_json_type(node['value']),
+                        joined_path, encode_to_json_type(node[NODE_VALUE]),
                     ))
-            elif node['state'] == REMOVED:
+            elif node[NODE_STATE] == REMOVED:
                 output.append("Property '{0}' was removed".format(joined_path))
         return '\n'.join(output)
     return iter_node(diff, [])
