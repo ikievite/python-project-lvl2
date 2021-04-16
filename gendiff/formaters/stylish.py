@@ -4,6 +4,7 @@
 
 
 from gendiff.find_diff import ADDED, CHANGED, REMOVED, UNCHANGED
+from gendiff.find_diff import NODE_CHILDREN, NODE_NAME, NODE_STATE, NODE_VALUE
 
 indent = 4
 diff_line = '{indent}{key}: {value}'
@@ -80,9 +81,9 @@ def format_line(badge, depth, node):
         diff string
     """
     current_indent = depth * indent * ' '
-    value = encode_to_json_type(node['value'], depth)
+    value = encode_to_json_type(node[NODE_VALUE], depth)
     return diff_line.format(
-        key=node['name'],
+        key=node[NODE_NAME],
         value=value,
         indent='{0}{1} '.format(current_indent[:-2], badge),
     )
@@ -100,29 +101,29 @@ def stylish_formater(diff):
     output = ['{']
 
     def iter_node(nodes, depth):  # noqa: WPS430 # ignore warning about nested function
-        for node in sorted(nodes, key=lambda node: node['name']):  # noqa: WPS440 # var overlap
+        for node in sorted(nodes, key=lambda node: node[NODE_NAME]):  # noqa: WPS440 # var overlap
             current_indent = depth * indent * ' '
-            if 'children' in node.keys():  # noqa: WPS223 # ignore quantity `elif` branches
+            if NODE_CHILDREN in node.keys():  # noqa: WPS223 # ignore quantity `elif` branches
                 output.append(diff_line.format(
                     indent=current_indent,
-                    key=node['name'],
+                    key=node[NODE_NAME],
                     value='{',
                 ))
-                iter_node(node['children'], depth + 1)
-            elif node['state'] == CHANGED:
+                iter_node(node[NODE_CHILDREN], depth + 1)
+            elif node[NODE_STATE] == CHANGED:
                 output.append(changed_value.format(
                     indent=current_indent[:-2],
-                    key=node['name'],
-                    removed_value=encode_to_json_type(node['value'][REMOVED], depth),
-                    added_value=encode_to_json_type(node['value'][ADDED], depth),
+                    key=node[NODE_NAME],
+                    removed_value=encode_to_json_type(node[NODE_VALUE][REMOVED], depth),
+                    added_value=encode_to_json_type(node[NODE_VALUE][ADDED], depth),
                 ))
-            elif node['state'] == UNCHANGED:  # noqa: WPS513 # implicit `elif`
+            elif node[NODE_STATE] == UNCHANGED:  # noqa: WPS513 # implicit `elif`
                 badge = ' '
                 output.append(format_line(badge, depth, node))
-            elif node['state'] == ADDED:
+            elif node[NODE_STATE] == ADDED:
                 badge = '+'
                 output.append(format_line(badge, depth, node))
-            elif node['state'] == REMOVED:
+            elif node[NODE_STATE] == REMOVED:
                 badge = '-'
                 output.append(format_line(badge, depth, node))
         output.append('{indent}{value}'.format(
