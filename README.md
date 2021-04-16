@@ -1,16 +1,11 @@
-#### My tests and linter status
+# GenDiff
+
+utility that determines the difference between two data structures.
+
 [![MyWorkflowCI](https://github.com/ikievite/python-project-lvl2/workflows/ci/badge.svg)](https://github.com/ikievite/python-project-lvl2/actions)
-
-#### Code Climate. Maintainability
-<a href="https://codeclimate.com/github/ikievite/python-project-lvl2/maintainability"><img src="https://api.codeclimate.com/v1/badges/306bf34be6c2e0d53560/maintainability" /></a>
-
-#### Code Climate. Test Coverage
-<a href="https://codeclimate.com/github/ikievite/python-project-lvl2/test_coverage"><img src="https://api.codeclimate.com/v1/badges/306bf34be6c2e0d53560/test_coverage" /></a>
-
-#### Hexlet tests and linter status:
+[![Maintainability](https://codeclimate.com/github/ikievite/python-project-lvl2/maintainability)(https://api.codeclimate.com/v1/badges/306bf34be6c2e0d53560/maintainability)]
+[![Test Coverage](https://codeclimate.com/github/ikievite/python-project-lvl2/test_coverage)](https://api.codeclimate.com/v1/badges/306bf34be6c2e0d53560/test_coverage)
 [![Actions Status](https://github.com/ikievite/python-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/ikievite/python-project-lvl2/actions)
-
-### Python Project "gendiff". Level 2
 
 Features:
  - supports different input formats: yaml, json
