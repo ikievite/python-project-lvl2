@@ -3,8 +3,8 @@
 utility that determines the difference between two data structures.
 
 [![MyWorkflowCI](https://github.com/ikievite/python-project-lvl2/workflows/ci/badge.svg)](https://github.com/ikievite/python-project-lvl2/actions)
-[![Maintainability](https://api.codeclimate.com/v1/badges/306bf34be6c2e0d53560/maintainability)(https://codeclimate.com/github/ikievite/python-project-lvl2/maintainability)]
-[![Test Coverage](https://codeclimate.com/github/ikievite/python-project-lvl2/test_coverage)](https://api.codeclimate.com/v1/badges/306bf34be6c2e0d53560/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/306bf34be6c2e0d53560/maintainability)](https://codeclimate.com/github/ikievite/python-project-lvl2/maintainability)
+[![Test Coverage]((https://api.codeclimate.com/v1/badges/306bf34be6c2e0d53560/test_coverage)](https://codeclimate.com/github/ikievite/python-project-lvl2/test_coverage)
 [![Actions Status](https://github.com/ikievite/python-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/ikievite/python-project-lvl2/actions)
 
 Features:
