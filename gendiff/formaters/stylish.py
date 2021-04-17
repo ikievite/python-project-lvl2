@@ -6,7 +6,7 @@
 from gendiff.find_diff import ADDED, CHANGED, REMOVED, UNCHANGED
 from gendiff.find_diff import NODE_CHILDREN, NODE_NAME, NODE_STATE, NODE_VALUE
 
-indent = 4
+INDENT = 4
 diff_line = '{indent}{key}: {value}'
 changed_value = ('{indent}- {key}: {removed_value}\n'
                  '{indent}+ {key}: {added_value}'  # noqa: WPS326, WPS318
@@ -47,7 +47,7 @@ def iter_complex(result, complex_value, depth):
     Returns:
         an indented list of values
     """
-    newline_indent = (depth + 1) * indent * ' '
+    newline_indent = (depth + 1) * INDENT * ' '
     for key, value in complex_value.items():
         if isinstance(value, dict):
             result.append(diff_line.format(
@@ -63,7 +63,7 @@ def iter_complex(result, complex_value, depth):
                 value=value,
             ))
     result.append('{indent}{value}'.format(
-        indent=depth * indent * ' ',
+        indent=depth * INDENT * ' ',
         value='}',
     ))
     return result
@@ -80,7 +80,7 @@ def format_line(badge, depth, node):
     Returns:
         diff string
     """
-    current_indent = depth * indent * ' '
+    current_indent = depth * INDENT * ' '
     value = encode_to_json_type(node[NODE_VALUE], depth)
     return diff_line.format(
         key=node[NODE_NAME],
@@ -102,7 +102,7 @@ def stylish_formater(diff):
 
     def iter_node(nodes, depth):  # noqa: WPS430 # ignore warning about nested function
         for node in sorted(nodes, key=lambda node: node[NODE_NAME]):  # noqa: WPS440 # var overlap
-            current_indent = depth * indent * ' '
+            current_indent = depth * INDENT * ' '
             if NODE_CHILDREN in node.keys():  # noqa: WPS223 # ignore quantity `elif` branches
                 output.append(diff_line.format(
                     indent=current_indent,
@@ -127,7 +127,7 @@ def stylish_formater(diff):
                 badge = '-'
                 output.append(format_line(badge, depth, node))
         output.append('{indent}{value}'.format(
-            indent=(depth - 1) * indent * ' ',
+            indent=(depth - 1) * INDENT * ' ',
             value='}',
         ))
         return '\n'.join(output)
