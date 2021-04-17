@@ -32,7 +32,7 @@ def encode_to_json_type(value, depth):
     elif isinstance(value, dict):
         node_value = '\n'.join(iter_complex(['{'], value, depth))
     else:
-        return value
+        node_value = value
     return node_value
 
 

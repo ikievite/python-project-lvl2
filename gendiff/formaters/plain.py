@@ -22,7 +22,7 @@ def encode_to_json_type(value):  # noqa: WPS110 # ignore warning about var name
     elif value is None:
         node_value = 'null'
     elif isinstance(value, int):
-        return value
+        node_value = value
     elif isinstance(value, dict):
         node_value = '[complex value]'
     else:
