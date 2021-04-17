@@ -8,11 +8,11 @@ import json
 import yaml
 
 
-def loader(filename):
+def loader(filepath):
     """Func load json or yaml files.
 
     Args:
-        filename: path to file
+        filepath: path to file
 
     Returns:
         conten of file
@@ -20,12 +20,12 @@ def loader(filename):
     Raises:
         Exception: if wrong file type given
     """
-    filename = filename.lower()
+    filepath = filepath.lower()
     try:
-        with open(filename) as f:  # noqa: WPS111 # ignore too short name
-            if 'json' in filename:
+        with open(filepath) as f:  # noqa: WPS111 # ignore too short name
+            if 'json' in filepath:
                 return json.load(f)
-            elif 'yaml' in filename or 'yml' in filename:
+            elif 'yaml' in filepath or 'yml' in filepath:
                 return yaml.safe_load(f)
             raise Exception('Wrong file type, neither json nor yaml/yml')
     except Exception:  # noqa: WPS329 # ignore allow `except` case
