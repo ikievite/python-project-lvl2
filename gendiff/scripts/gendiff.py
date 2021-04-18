@@ -6,7 +6,7 @@
 import argparse
 
 from gendiff.find_diff import find_diff
-from gendiff.format_diff import CHOICE_JSON, CHOICE_PLAIN, CHOICE_STYLISH, format_diff
+from gendiff.format_diff import JSON_VIEW, PLAIN_VIEW, STYLISH_VIEW, format_diff
 from gendiff.loader import loader
 
 
@@ -34,10 +34,10 @@ def main():
     parser.add_argument(
         '-f',
         '--format',
-        choices=[CHOICE_STYLISH, CHOICE_PLAIN, CHOICE_JSON],
-        default=CHOICE_STYLISH,
+        choices=[STYLISH_VIEW, PLAIN_VIEW, JSON_VIEW],
+        default=STYLISH_VIEW,
         dest='formater',
-        help='set output format (default: "{0}")'.format(CHOICE_STYLISH),
+        help='set output format (default: "{0}")'.format(STYLISH_VIEW),
     )
     args = parser.parse_args()
     try:  # noqa: WPS229 # allow long ``try`` body length
