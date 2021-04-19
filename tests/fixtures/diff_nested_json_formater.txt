@@ -4,11 +4,6 @@
         "state": "UNCHANGED",
         "children": [
             {
-                "name": "follow",
-                "state": "ADDED",
-                "value": false
-            },
-            {
                 "name": "setting1",
                 "state": "UNCHANGED",
                 "value": "Value 1"
@@ -22,31 +17,9 @@
                 }
             },
             {
-                "name": "setting4",
-                "state": "ADDED",
-                "value": "blah blah"
-            },
-            {
-                "name": "setting5",
-                "state": "ADDED",
-                "value": {
-                    "key5": "value5"
-                }
-            },
-            {
                 "name": "setting6",
                 "state": "UNCHANGED",
                 "children": [
-                    {
-                        "name": "key",
-                        "state": "UNCHANGED",
-                        "value": "value"
-                    },
-                    {
-                        "name": "ops",
-                        "state": "ADDED",
-                        "value": "vops"
-                    },
                     {
                         "name": "doge",
                         "state": "UNCHANGED",
@@ -60,8 +33,35 @@
                                 }
                             }
                         ]
+                    },
+                    {
+                        "name": "key",
+                        "state": "UNCHANGED",
+                        "value": "value"
+                    },
+                    {
+                        "name": "ops",
+                        "state": "ADDED",
+                        "value": "vops"
                     }
                 ]
+            },
+            {
+                "name": "follow",
+                "state": "ADDED",
+                "value": false
+            },
+            {
+                "name": "setting5",
+                "state": "ADDED",
+                "value": {
+                    "key5": "value5"
+                }
+            },
+            {
+                "name": "setting4",
+                "state": "ADDED",
+                "value": "blah blah"
             },
             {
                 "name": "setting2",
@@ -80,14 +80,6 @@
                 "value": "bar"
             },
             {
-                "name": "baz",
-                "state": "CHANGED",
-                "value": {
-                    "REMOVED": "bas",
-                    "ADDED": "bars"
-                }
-            },
-            {
                 "name": "nest",
                 "state": "CHANGED",
                 "value": {
@@ -95,6 +87,14 @@
                         "key": "value"
                     },
                     "ADDED": "str"
+                }
+            },
+            {
+                "name": "baz",
+                "state": "CHANGED",
+                "value": {
+                    "REMOVED": "bas",
+                    "ADDED": "bars"
                 }
             }
         ]
@@ -122,4 +122,3 @@
         }
     }
 ]
-
