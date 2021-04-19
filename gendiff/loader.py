@@ -9,10 +9,10 @@ import pathlib
 import yaml
 
 
-class BadFileType(Exception):
+class FileTypeError(Exception):
     """A class to represent wrong file tyle."""
 
-    pass  # noqa: WPS420, WPS604 # ignore wrong keyword: ipass, ncorrect node inside `class` body
+    pass  # noqa: WPS420, WPS604 # ignore wrong keyword: pass, incorrect node inside `class` body
 
 
 def loader(filepath):
@@ -25,7 +25,7 @@ def loader(filepath):
         conten of file
 
     Raises:
-         BadFileType: if wrong file type given
+         FileTypeError: if wrong file type given
     """
     file_extention = pathlib.Path(filepath).suffix.lower()
     with open(filepath) as f:  # noqa: WPS111 # ignore too short name
@@ -33,4 +33,4 @@ def loader(filepath):
             return json.load(f)
         elif file_extention == '.yaml' or file_extention == '.yml':  # noqa: WPS514 # implicit `in`
             return yaml.safe_load(f)
-        raise BadFileType('Wrong file type, neither json nor yaml/yml')
+        raise FileTypeError('Wrong file type, neither json nor yaml/yml')
