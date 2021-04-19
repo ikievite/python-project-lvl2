@@ -10,4 +10,4 @@ def test_format_diff_jsonlike_formater():
     with pytest.raises(Exception) as excinfo:
         format_diff({}, 'jsonlike')
     exception_msg = excinfo.value.args[0]
-    assert exception_msg == "unsupported formater type 'jsonlike'"
+    assert exception_msg == "Wrong formater: 'jsonlike'"
