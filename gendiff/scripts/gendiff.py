@@ -3,11 +3,10 @@
 """gendiff package."""
 
 
-import argparse
-
 from gendiff.find_diff import find_diff
-from gendiff.format_diff import JSON_VIEW, PLAIN_VIEW, STYLISH_VIEW, format_diff
+from gendiff.format_diff import format_diff
 from gendiff.loader import loader
+from gendiff.args_parser import args_parse
 
 
 def generate_diff(file1, file2, formater='stylish'):
@@ -28,18 +27,7 @@ def generate_diff(file1, file2, formater='stylish'):
 
 def main():
     """Run main func."""
-    parser = argparse.ArgumentParser(description='Compares two json/yaml files and shows a diff.')
-    parser.add_argument('first_file')
-    parser.add_argument('second_file')
-    parser.add_argument(
-        '-f',
-        '--format',
-        choices=[STYLISH_VIEW, PLAIN_VIEW, JSON_VIEW],
-        default=STYLISH_VIEW,
-        dest='formater',
-        help='set output format (default: "{0}")'.format(STYLISH_VIEW),
-    )
-    args = parser.parse_args()
+    args = args_parse()
     try:  # noqa: WPS229 # allow long ``try`` body length
         diff = generate_diff(args.first_file, args.second_file, args.formater)
 
