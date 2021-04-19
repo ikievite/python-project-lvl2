@@ -24,7 +24,6 @@ def find_diff(dict1, dict2):
         list with diff items
     """
     diff = []
-
     for key in dict2:
         value1 = dict1.get(key)
         value2 = dict2.get(key)
@@ -53,13 +52,11 @@ def find_diff(dict1, dict2):
                 NODE_STATE: ADDED,
                 NODE_VALUE: value2,
             })
-    for node_key in dict1:
-        value1 = dict1.get(node_key)
-        if node_key not in dict2.keys():
-            diff.append({
-                NODE_NAME: node_key,
-                NODE_STATE: REMOVED,
-                NODE_VALUE: value1,
-            })
-
+    for node_key in set(dict1) - set(dict2):
+        removed_value = dict1.get(node_key)
+        diff.append({
+            NODE_NAME: node_key,
+            NODE_STATE: REMOVED,
+            NODE_VALUE: removed_value,
+        })
     return diff
