@@ -16,10 +16,8 @@ def main():
         diff = generate_diff(args.first_file, args.second_file, args.formater)
 
         print(diff)  # noqa: WPS421 # allow print call
-    except FormaterError as e:  # noqa: WPS111 # ignore warning about to short name
-        print('Exception: {0}'.format(str(e)))  # noqa: WPS421, ignore warning about print call
-    except FileTypeError as e:  # noqa: WPS111
-        print('Exception: {0}'.format(str(e)))  # noqa: WPS421
+    except (FormaterError, FileTypeError) as e:  # noqa: WPS111 # ignore wrn about to short name
+        print('Exception: {0}'.format(str(e)))  # noqa: WPS421 # ignore warning about print call
 
 
 if __name__ == '__main__':
