@@ -3,7 +3,9 @@
 """module with plain formater."""
 
 
-from gendiff.find_diff import ADDED, CHANGED, NODE_NAME, NODE_STATE, NODE_VALUE, REMOVED
+from gendiff.find_diff import (
+    ADDED, CHANGED, NODE_CHILDREN, NODE_NAME, NODE_STATE, NODE_VALUE, REMOVED,
+)
 
 
 def encode_to_json_type(value):  # noqa: WPS110 # ignore warning about var name
@@ -30,7 +32,7 @@ def encode_to_json_type(value):  # noqa: WPS110 # ignore warning about var name
     return node_value
 
 
-def plain_formater(diff):
+def plain_formater(diff):  # noqa: WPS210 # Found too many local variables: 7 > 6
     """Func builds plain output from diff.
 
     Args:
@@ -43,13 +45,12 @@ def plain_formater(diff):
 
     def iter_node(nodes, parent):  # noqa: WPS430 # ignore warn about nested function
         for node in sorted(nodes, key=lambda node: node[NODE_NAME]):  # noqa: WPS440 # var overlap
-            path = []
-            path.extend(parent)
-            path.append(node[NODE_NAME])
+            path = [*parent, node[NODE_NAME]]
             joined_path = '.'.join(path)
-            if 'children' in node.keys():
-                iter_node(node['children'], path)
-            elif node['state'] == CHANGED:
+            children = node.get(NODE_CHILDREN)
+            if children:
+                iter_node(children, path)
+            elif node[NODE_STATE] == CHANGED:
                 removed_value = encode_to_json_type(node[NODE_VALUE][REMOVED])
                 added_value = encode_to_json_type(node[NODE_VALUE][ADDED])
                 output.append("Property '{0}' was updated. From {1} to {2}".format(
@@ -57,7 +58,7 @@ def plain_formater(diff):
                     removed_value,
                     added_value,
                 ))
-            elif node['state'] == ADDED:
+            elif node[NODE_STATE] == ADDED:
                 if isinstance(node[NODE_VALUE], dict):
                     output.append("Property '{0}' was added with value: [complex value]".format(
                         joined_path,
