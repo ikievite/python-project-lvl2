@@ -103,13 +103,14 @@ def stylish_formater(diff):
     def iter_node(nodes, depth):  # noqa: WPS430 # ignore warning about nested function
         for node in sorted(nodes, key=lambda node: node[NODE_NAME]):  # noqa: WPS440 # var overlap
             current_indent = depth * INDENT * ' '
-            if NODE_CHILDREN in node.keys():  # noqa: WPS223 # ignore quantity `elif` branches
+            children = node.get(NODE_CHILDREN)
+            if children:  # noqa: WPS223 # ignore too many `elif` branches: 4 > 3
                 output.append(diff_line.format(
                     indent=current_indent,
                     key=node[NODE_NAME],
                     value='{',
                 ))
-                iter_node(node[NODE_CHILDREN], depth + 1)
+                iter_node(children, depth + 1)
             elif node[NODE_STATE] == CHANGED:
                 output.append(changed_value.format(
                     indent=current_indent[:-2],
@@ -117,7 +118,7 @@ def stylish_formater(diff):
                     removed_value=encode_to_json_type(node[NODE_VALUE][REMOVED], depth),
                     added_value=encode_to_json_type(node[NODE_VALUE][ADDED], depth),
                 ))
-            elif node[NODE_STATE] == UNCHANGED:  # noqa: WPS513 # implicit `elif`
+            elif node[NODE_STATE] == UNCHANGED:
                 badge = ' '
                 output.append(format_line(badge, depth, node))
             elif node[NODE_STATE] == ADDED:
