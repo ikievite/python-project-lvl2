@@ -5,6 +5,7 @@
 
 from gendiff.find_diff import ADDED, CHANGED, REMOVED, UNCHANGED
 from gendiff.find_diff import NODE_CHILDREN, NODE_NAME, NODE_STATE, NODE_VALUE
+from gendiff.formaters.format_value import encode_to_output
 
 INDENT = 4
 diff_line = '{indent}{key}: {value}'
@@ -13,7 +14,7 @@ changed_value = ('{indent}- {key}: {removed_value}\n'
                  )                   # implicit string concatenation, ignore: extra indentation
 
 
-def encode_to_json_type(value, depth):
+def prepare_value(value, depth):
     """Func encodes value to json format.
 
     Args:
@@ -23,16 +24,10 @@ def encode_to_json_type(value, depth):
     Returns:
         encoded value
     """
-    if value is True:
-        node_value = 'true'
-    elif value is False:
-        node_value = 'false'
-    elif value is None:
-        node_value = 'null'
-    elif isinstance(value, dict):
+    if isinstance(value, dict):
         node_value = '\n'.join(iter_complex(['{'], value, depth))
     else:
-        node_value = value
+        node_value = encode_to_output(value)
     return node_value
 
 
@@ -81,7 +76,7 @@ def format_line(badge, depth, node):
         diff string
     """
     current_indent = depth * INDENT * ' '
-    value = encode_to_json_type(node[NODE_VALUE], depth)
+    value = prepare_value(node[NODE_VALUE], depth)
     return diff_line.format(
         key=node[NODE_NAME],
         value=value,
@@ -115,8 +110,8 @@ def stylish_formater(diff):
                 output.append(changed_value.format(
                     indent=current_indent[:-2],
                     key=node[NODE_NAME],
-                    removed_value=encode_to_json_type(node[NODE_VALUE][REMOVED], depth),
-                    added_value=encode_to_json_type(node[NODE_VALUE][ADDED], depth),
+                    removed_value=prepare_value(node[NODE_VALUE][REMOVED], depth),
+                    added_value=prepare_value(node[NODE_VALUE][ADDED], depth),
                 ))
             elif node[NODE_STATE] == UNCHANGED:
                 badge = ' '
