@@ -52,10 +52,10 @@ def test_generate_diff_with_formater(file1, file2, formater, diff):
     assert generate_diff(file1, file2, formater) == expected
 
 
-def convert_to_dict(l):
+def convert_to_dict(nodes):
     result = {}
-    for node in l:
-        result.update({node[NODE_NAME]:node})
+    for node in nodes:
+        result.update({node[NODE_NAME]: node})
     return result
 
 
