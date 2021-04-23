@@ -9,7 +9,7 @@ from gendiff.formaters.format_value import encode_to_output
 
 INDENT = 4
 BADGE_SIZE = 1
-SPACE = 1  # space between badge and key: value
+BADGE_PADDING = 1
 BLANK = ' '
 OPEN_BRACE = '{'
 CLOSE_BRACE = '}'
@@ -84,51 +84,53 @@ def format_line(badge, current_indent, node):
     return diff_line.format(
         key=node[NODE_NAME],
         value=node_value,
-        indent='{0}{1}{2}'.format(current_indent[:-(BADGE_SIZE + SPACE)], badge, BLANK * SPACE),
+        indent='{0}{1}{2}'.format(
+            current_indent[:-(BADGE_SIZE + BADGE_PADDING)],
+            badge,
+            BLANK * BADGE_PADDING,
+        ),
     )
 
 
-def stylish_formater(diff):
+def stylish_formater(nodes, output, depth=1):
     """Func that display diff tree.
 
     Args:
-        diff: list with diff dicts
+        nodes: list with diff dicts
+        output: list with OPEN_BRACE
+        depth: depth
 
     Returns:
         output string
     """
-    output = [OPEN_BRACE]
-
-    def iter_node(nodes, depth):  # noqa: WPS430 # ignore warning about nested function
-        for node in sorted(nodes, key=lambda node: node[NODE_NAME]):  # noqa: WPS440 # var overlap
-            current_indent = depth * INDENT * BLANK
-            children = node.get(NODE_CHILDREN)
-            if children:  # noqa: WPS223 # ignore too many `elif` branches: 4 > 3
-                output.append(diff_line.format(
-                    indent=current_indent,
-                    key=node[NODE_NAME],
-                    value=OPEN_BRACE,
-                ))
-                iter_node(children, depth + 1)
-            elif node[NODE_STATE] == CHANGED:
-                output.append(changed_value.format(
-                    indent=current_indent[:-(BADGE_SIZE + SPACE)],
-                    key=node[NODE_NAME],
-                    removed_value=prepare_value(node[NODE_VALUE][REMOVED], current_indent),
-                    added_value=prepare_value(node[NODE_VALUE][ADDED], current_indent),
-                ))
-            elif node[NODE_STATE] == UNCHANGED:
-                badge = ' '
-                output.append(format_line(badge, current_indent, node))
-            elif node[NODE_STATE] == ADDED:
-                badge = '+'
-                output.append(format_line(badge, current_indent, node))
-            elif node[NODE_STATE] == REMOVED:
-                badge = '-'
-                output.append(format_line(badge, current_indent, node))
-        output.append('{indent}{value}'.format(
-            indent=(depth - 1) * INDENT * BLANK,
-            value=CLOSE_BRACE,
-        ))
-        return '\n'.join(output)
-    return iter_node(diff, 1)
+    for node in sorted(nodes, key=lambda node: node[NODE_NAME]):  # noqa: WPS440 # var overlap
+        current_indent = depth * INDENT * BLANK
+        children = node.get(NODE_CHILDREN)
+        if children:  # noqa: WPS223 # ignore too many `elif` branches: 4 > 3
+            output.append(diff_line.format(
+                indent=current_indent,
+                key=node[NODE_NAME],
+                value=OPEN_BRACE,
+            ))
+            stylish_formater(children, output, depth + 1)
+        elif node[NODE_STATE] == CHANGED:
+            output.append(changed_value.format(
+                indent=current_indent[:-(BADGE_SIZE + BADGE_PADDING)],
+                key=node[NODE_NAME],
+                removed_value=prepare_value(node[NODE_VALUE][REMOVED], current_indent),
+                added_value=prepare_value(node[NODE_VALUE][ADDED], current_indent),
+            ))
+        elif node[NODE_STATE] == UNCHANGED:
+            badge = ' '
+            output.append(format_line(badge, current_indent, node))
+        elif node[NODE_STATE] == ADDED:
+            badge = '+'
+            output.append(format_line(badge, current_indent, node))
+        elif node[NODE_STATE] == REMOVED:
+            badge = '-'
+            output.append(format_line(badge, current_indent, node))
+    output.append('{indent}{value}'.format(
+        indent=(depth - 1) * INDENT * BLANK,
+        value=CLOSE_BRACE,
+    ))
+    return '\n'.join(output)
