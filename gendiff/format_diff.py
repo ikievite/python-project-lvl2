@@ -35,7 +35,7 @@ def format_diff(diff, formater):
     if formater == STYLISH_VIEW:
         return stylish_formater(diff, [OPEN_BRACE])
     elif formater == PLAIN_VIEW:
-        return plain_formater(diff)
+        return plain_formater(diff, [])
     elif formater == JSON_VIEW:
         return json_formater(diff)
     raise FormaterError("Wrong formater: '{0}'".format(formater))
