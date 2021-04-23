@@ -8,6 +8,8 @@ from gendiff.find_diff import NODE_CHILDREN, NODE_NAME, NODE_STATE, NODE_VALUE
 from gendiff.formaters.format_value import encode_to_output
 
 INDENT = 4
+BADGE_SIZE = 1
+SPACE = 1  # space between badge and key: value
 diff_line = '{indent}{key}: {value}'
 changed_value = ('{indent}- {key}: {removed_value}\n'
                  '{indent}+ {key}: {added_value}'  # noqa: WPS326, WPS318
@@ -15,7 +17,7 @@ changed_value = ('{indent}- {key}: {removed_value}\n'
 
 
 def prepare_value(value, depth):
-    """Func encodes value to json format.
+    """Func encodes value to appropriate format.
 
     Args:
         value: value from node
@@ -80,7 +82,7 @@ def format_line(badge, depth, node):
     return diff_line.format(
         key=node[NODE_NAME],
         value=value,
-        indent='{0}{1} '.format(current_indent[:-2], badge),
+        indent='{0}{1}{2}'.format(current_indent[:-(BADGE_SIZE + SPACE)], badge, ' ' * SPACE),
     )
 
 
@@ -108,7 +110,7 @@ def stylish_formater(diff):
                 iter_node(children, depth + 1)
             elif node[NODE_STATE] == CHANGED:
                 output.append(changed_value.format(
-                    indent=current_indent[:-2],
+                    indent=current_indent[:-(BADGE_SIZE + SPACE)],
                     key=node[NODE_NAME],
                     removed_value=prepare_value(node[NODE_VALUE][REMOVED], depth),
                     added_value=prepare_value(node[NODE_VALUE][ADDED], depth),
