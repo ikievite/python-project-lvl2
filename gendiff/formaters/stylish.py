@@ -4,130 +4,133 @@
 
 
 from gendiff.find_diff import ADDED, CHANGED, REMOVED, UNCHANGED
+from gendiff.find_diff import NODE_CHILDREN, NODE_NAME, NODE_STATE, NODE_VALUE
+from gendiff.formaters.format_value import encode_to_output
 
-indent = 4
+INDENT = 4
+BADGE_SIZE = 1
+BADGE_PADDING = 1
+BLANK = ' '
+OPEN_BRACE = '{'
+CLOSE_BRACE = '}'
 diff_line = '{indent}{key}: {value}'
 changed_value = ('{indent}- {key}: {removed_value}\n'
                  '{indent}+ {key}: {added_value}'  # noqa: WPS326, WPS318
                  )                   # implicit string concatenation, ignore: extra indentation
 
 
-def encode_to_json_type(value, depth):
-    """Func encodes value to json format.
+def prepare_value(node_value, current_indent):
+    """Func encodes value to appropriate format.
 
     Args:
-        value: value from node
-        depth: depth
+        node_value: value from node
+        current_indent: current indent
 
     Returns:
         encoded value
     """
-    if value is True:
-        node_value = 'true'
-    elif value is False:
-        node_value = 'false'
-    elif value is None:
-        node_value = 'null'
-    elif isinstance(value, dict):
-        node_value = '\n'.join(iter_complex(['{'], value, depth))
+    if isinstance(node_value, dict):
+        formatted_value = '\n'.join(iter_complex([OPEN_BRACE], node_value, current_indent))
     else:
-        return value
-    return node_value
+        formatted_value = encode_to_output(node_value)
+    return formatted_value
 
 
-def iter_complex(result, complex_value, depth):
+def iter_complex(complex_items, complex_value, current_indent):
     """Func prepare output for complex node.
 
     Args:
         complex_value: value
-        depth: depth
-        result: list with values, neaded for iteration
+        current_indent: current indent
+        complex_items: list with values, neaded for iteration
 
     Returns:
         an indented list of values
     """
-    newline_indent = (depth + 1) * indent * ' '
-    for key, value in complex_value.items():
+    newline_indent = current_indent + INDENT * BLANK
+    for key, value in complex_value.items():  # noqa: WPS110 # ignore - wrong var name: value
         if isinstance(value, dict):
-            result.append(diff_line.format(
+            complex_items.append(diff_line.format(
                 indent=newline_indent,
                 key=key,
-                value='{',
+                value=OPEN_BRACE,
             ))
-            iter_complex(result, value, depth + 1)
+            iter_complex(complex_items, value, current_indent + INDENT * BLANK)
         else:
-            result.append(diff_line.format(
+            complex_items.append(diff_line.format(
                 indent=newline_indent,
                 key=key,
                 value=value,
             ))
-    result.append('{indent}{value}'.format(
-        indent=depth * indent * ' ',
-        value='}',
+    complex_items.append('{indent}{value}'.format(
+        indent=current_indent,
+        value=CLOSE_BRACE,
     ))
-    return result
+    return complex_items
 
 
-def format_line(badge, depth, node):
+def format_line(badge, current_indent, node):
     """Func returns formatted string.
 
     Args:
         badge: badge
-        depth: depth
+        current_indent: current indent
         node: node
 
     Returns:
         diff string
     """
-    current_indent = depth * indent * ' '
-    value = encode_to_json_type(node['value'], depth)
+    node_value = prepare_value(node[NODE_VALUE], current_indent)
     return diff_line.format(
-        key=node['name'],
-        value=value,
-        indent='{0}{1} '.format(current_indent[:-2], badge),
+        key=node[NODE_NAME],
+        value=node_value,
+        indent='{0}{1}{2}'.format(
+            current_indent[:-(BADGE_SIZE + BADGE_PADDING)],
+            badge,
+            BLANK * BADGE_PADDING,
+        ),
     )
 
 
-def stylish_formater(diff):
+def stylish_formater(nodes, output, depth=1):
     """Func that display diff tree.
 
     Args:
-        diff: list with diff dicts
+        nodes: list with diff dicts
+        output: list with OPEN_BRACE
+        depth: depth
 
     Returns:
         output string
     """
-    output = ['{']
-
-    def iter_node(nodes, depth):  # noqa: WPS430 # ignore warning about nested function
-        for node in sorted(nodes, key=lambda node: node['name']):  # noqa: WPS440 # var overlap
-            current_indent = depth * indent * ' '
-            if 'children' in node.keys():  # noqa: WPS223 # ignore quantity `elif` branches
-                output.append(diff_line.format(
-                    indent=current_indent,
-                    key=node['name'],
-                    value='{',
-                ))
-                iter_node(node['children'], depth + 1)
-            elif node['state'] == CHANGED:
-                output.append(changed_value.format(
-                    indent=current_indent[:-2],
-                    key=node['name'],
-                    removed_value=encode_to_json_type(node['value'][REMOVED], depth),
-                    added_value=encode_to_json_type(node['value'][ADDED], depth),
-                ))
-            elif node['state'] == UNCHANGED:  # noqa: WPS513 # implicit `elif`
-                badge = ' '
-                output.append(format_line(badge, depth, node))
-            elif node['state'] == ADDED:
-                badge = '+'
-                output.append(format_line(badge, depth, node))
-            elif node['state'] == REMOVED:
-                badge = '-'
-                output.append(format_line(badge, depth, node))
-        output.append('{indent}{value}'.format(
-            indent=(depth - 1) * indent * ' ',
-            value='}',
-        ))
-        return '\n'.join(output)
-    return iter_node(diff, 1)
+    for node in sorted(nodes, key=lambda node: node[NODE_NAME]):  # noqa: WPS440 # var overlap
+        current_indent = depth * INDENT * BLANK
+        children = node.get(NODE_CHILDREN)
+        if children:  # noqa: WPS223 # ignore too many `elif` branches: 4 > 3
+            output.append(diff_line.format(
+                indent=current_indent,
+                key=node[NODE_NAME],
+                value=OPEN_BRACE,
+            ))
+            stylish_formater(children, output, depth + 1)
+        elif node[NODE_STATE] == CHANGED:
+            output.append(changed_value.format(
+                indent=current_indent[:-(BADGE_SIZE + BADGE_PADDING)],
+                key=node[NODE_NAME],
+                removed_value=prepare_value(node[NODE_VALUE][REMOVED], current_indent),
+                added_value=prepare_value(node[NODE_VALUE][ADDED], current_indent),
+            ))
+        elif node[NODE_STATE] == UNCHANGED:
+            badge = ' '
+            output.append(format_line(badge, current_indent, node))
+        elif node[NODE_STATE] == ADDED:
+            badge = '+'
+            output.append(format_line(badge, current_indent, node))
+        elif node[NODE_STATE] == REMOVED:
+            badge = '-'
+            output.append(format_line(badge, current_indent, node))
+    output.append('{indent}{value}'.format(
+        indent=(depth - 1) * INDENT * BLANK,
+        value=CLOSE_BRACE,
+    ))
+    return '\n'.join(output)

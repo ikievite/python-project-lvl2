@@ -3,11 +3,14 @@
 """module with plain formater."""
 
 
-from gendiff.find_diff import ADDED, CHANGED, REMOVED
+from gendiff.find_diff import (
+    ADDED, CHANGED, NODE_CHILDREN, NODE_NAME, NODE_STATE, NODE_VALUE, REMOVED,
+)
+from gendiff.formaters.format_value import encode_to_output
 
 
-def encode_to_json_type(value):  # noqa: WPS110 # ignore warning about var name
-    """Func encodes value to json format.
+def prepare_value(value):  # noqa: WPS110 # ignore warning about var name
+    """Func encodes value to the selected view.
 
     Args:
         value: value from node
@@ -15,58 +18,49 @@ def encode_to_json_type(value):  # noqa: WPS110 # ignore warning about var name
     Returns:
         encoded value
     """
-    if value is True:  # noqa: WPS223 # ignore too many `elif`
-        node_value = 'true'
-    elif value is False:
-        node_value = 'false'
-    elif value is None:
-        node_value = 'null'
-    elif isinstance(value, int):
-        return value
-    elif isinstance(value, dict):
+    if isinstance(value, dict):
         node_value = '[complex value]'
-    else:
+    elif isinstance(value, str):
         node_value = "'{0}'".format(value)
+    else:
+        node_value = encode_to_output(value)
     return node_value
 
 
-def plain_formater(diff):
+def plain_formater(nodes, output, parent=[]):  # noqa: B006, WPS404 # ignore usong list as arg
     """Func builds plain output from diff.
 
     Args:
-        diff: list with nodes
+        nodes: list with nodes
+        output: list with diff lines
+        parent: parent list
 
     Returns:
         output: formated diff
     """
-    output = []
-
-    def iter_node(nodes, parent):  # noqa: WPS430 # ignore warn about nested function
-        for node in sorted(nodes, key=lambda node: node['name']):  # noqa: WPS440 # var overlap
-            path = []
-            path.extend(parent)
-            path.append(node['name'])
-            joined_path = '.'.join(path)
-            if 'children' in node.keys():
-                iter_node(node['children'], path)
-            elif node['state'] == CHANGED:
-                removed_value = encode_to_json_type(node['value'][REMOVED])
-                added_value = encode_to_json_type(node['value'][ADDED])
-                output.append("Property '{0}' was updated. From {1} to {2}".format(
+    for node in sorted(nodes, key=lambda node: node[NODE_NAME]):  # noqa: WPS440 # var overlap
+        path = [*parent, node[NODE_NAME]]
+        joined_path = '.'.join(path)
+        children = node.get(NODE_CHILDREN)
+        if children:
+            plain_formater(children, output, path)
+        elif node[NODE_STATE] == CHANGED:
+            removed_value = prepare_value(node[NODE_VALUE][REMOVED])
+            added_value = prepare_value(node[NODE_VALUE][ADDED])
+            output.append("Property '{0}' was updated. From {1} to {2}".format(
+                joined_path,
+                removed_value,
+                added_value,
+            ))
+        elif node[NODE_STATE] == ADDED:
+            if isinstance(node[NODE_VALUE], dict):
+                output.append("Property '{0}' was added with value: [complex value]".format(
                     joined_path,
-                    removed_value,
-                    added_value,
                 ))
-            elif node['state'] == ADDED:
-                if isinstance(node['value'], dict):
-                    output.append("Property '{0}' was added with value: [complex value]".format(
-                        joined_path,
-                    ))
-                else:
-                    output.append("Property '{0}' was added with value: {1}".format(
-                        joined_path, encode_to_json_type(node['value']),
-                    ))
-            elif node['state'] == REMOVED:
-                output.append("Property '{0}' was removed".format(joined_path))
-        return '\n'.join(output)
-    return iter_node(diff, [])
+            else:
+                output.append("Property '{0}' was added with value: {1}".format(
+                    joined_path, prepare_value(node[NODE_VALUE]),
+                ))
+        elif node[NODE_STATE] == REMOVED:
+            output.append("Property '{0}' was removed".format(joined_path))
+    return '\n'.join(output)
