@@ -137,7 +137,7 @@ def iter_node(nodes, output, depth=1):
 
 
 def stylish_formater(diff):
-    """Func that returns diff tree.
+    """Func that returns stylish formated diff.
 
     Args:
         diff: list with diff dicts
