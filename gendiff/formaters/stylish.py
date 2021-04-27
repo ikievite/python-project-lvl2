@@ -92,8 +92,8 @@ def format_line(badge, current_indent, node):
     )
 
 
-def stylish_formater(nodes, output, depth=1):
-    """Func that display diff tree.
+def iter_node(nodes, output, depth=1):
+    """Func finds and returns diff from list with diff dicts.
 
     Args:
         nodes: list with diff dicts
@@ -112,7 +112,7 @@ def stylish_formater(nodes, output, depth=1):
                 key=node[NODE_NAME],
                 value=OPEN_BRACE,
             ))
-            stylish_formater(children, output, depth + 1)
+            iter_node(children, output, depth + 1)
         elif node[NODE_STATE] == CHANGED:
             output.append(changed_value.format(
                 indent=current_indent[:-(BADGE_SIZE + BADGE_PADDING)],
@@ -134,3 +134,15 @@ def stylish_formater(nodes, output, depth=1):
         value=CLOSE_BRACE,
     ))
     return '\n'.join(output)
+
+
+def stylish_formater(diff):
+    """Func that returns diff tree.
+
+    Args:
+        diff: list with diff dicts
+
+    Returns:
+        output string
+    """
+    return iter_node(diff, [OPEN_BRACE])

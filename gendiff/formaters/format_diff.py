@@ -5,7 +5,7 @@
 
 from gendiff.formaters.json import json_formater
 from gendiff.formaters.plain import plain_formater
-from gendiff.formaters.stylish import OPEN_BRACE, stylish_formater
+from gendiff.formaters.stylish import stylish_formater
 
 
 class FormaterError(Exception):
@@ -33,9 +33,9 @@ def format_diff(diff, formater):
         FormaterError: if wrong formater given
     """
     if formater == STYLISH_VIEW:
-        return stylish_formater(diff, [OPEN_BRACE])
+        return stylish_formater(diff)
     elif formater == PLAIN_VIEW:
-        return plain_formater(diff, [])
+        return plain_formater(diff)
     elif formater == JSON_VIEW:
         return json_formater(diff)
     raise FormaterError("Wrong formater: '{0}'".format(formater))
