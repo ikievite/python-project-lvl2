@@ -5,7 +5,7 @@
 
 from gendiff.find_diff import find_diff
 from gendiff.formaters.format_diff import STYLISH_VIEW, format_diff
-from gendiff.loader import loader
+from gendiff.loader import load_content
 
 
 def generate_diff(file1, file2, formater=STYLISH_VIEW):
@@ -19,6 +19,6 @@ def generate_diff(file1, file2, formater=STYLISH_VIEW):
     Returns:
         string with diff
     """
-    content1, content2 = loader(file1), loader(file2)
+    content1, content2 = load_content(file1), load_content(file2)
     diff = find_diff(content1, content2)
     return format_diff(diff, formater)
