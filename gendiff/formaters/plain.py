@@ -6,7 +6,6 @@
 from gendiff.find_diff import (
     ADDED, CHANGED, NODE_CHILDREN, NODE_NAME, NODE_STATE, NODE_VALUE, REMOVED,
 )
-from gendiff.formaters.format_value import encode_to_output
 
 
 def prepare_value(value):  # noqa: WPS110 # ignore warning about var name
@@ -18,12 +17,18 @@ def prepare_value(value):  # noqa: WPS110 # ignore warning about var name
     Returns:
         encoded value
     """
-    if isinstance(value, dict):
+    if value is True:  # noqa: WPS223 # ignore warning about too many `elif` branches: 4 > 3
+        node_value = 'true'
+    elif value is False:
+        node_value = 'false'
+    elif value is None:
+        node_value = 'null'
+    elif isinstance(value, dict):
         node_value = '[complex value]'
     elif isinstance(value, str):
         node_value = "'{0}'".format(value)
     else:
-        node_value = encode_to_output(value)
+        node_value = value
     return node_value
 
 
