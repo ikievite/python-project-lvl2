@@ -6,7 +6,7 @@
 from gendiff.args_parser import args_parse
 from gendiff.generate_diff import generate_diff
 from gendiff.loader import FileTypeError
-from gendiff.format_diff import FormaterError
+from gendiff.formaters.format_diff import FormaterError
 
 
 def main():

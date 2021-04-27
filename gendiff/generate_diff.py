@@ -4,7 +4,7 @@
 
 
 from gendiff.find_diff import find_diff
-from gendiff.format_diff import format_diff
+from gendiff.formaters.format_diff import format_diff
 from gendiff.loader import loader
 
 

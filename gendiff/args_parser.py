@@ -5,7 +5,7 @@
 
 import argparse
 
-from gendiff.format_diff import JSON_VIEW, PLAIN_VIEW, STYLISH_VIEW
+from gendiff.formaters.format_diff import JSON_VIEW, PLAIN_VIEW, STYLISH_VIEW
 
 
 def args_parse():
