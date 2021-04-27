@@ -5,11 +5,11 @@
 
 import argparse
 
-from gendiff.format_diff import JSON_VIEW, PLAIN_VIEW, STYLISH_VIEW
+from gendiff.formaters.format_diff import JSON_VIEW, PLAIN_VIEW, STYLISH_VIEW
 
 
-def args_parse():
-    """Func parses arguments.
+def prepare_args_parser():
+    """Func creates parser and adds arguments.
 
     Returns:
         an object holding attributes
@@ -26,3 +26,12 @@ def args_parse():
         help='set output format (default: "{0}")'.format(STYLISH_VIEW),
     )
     return parser.parse_args()
+
+
+def args_parse():
+    """Func returns parser and arguments.
+
+    Returns:
+        parser and arguments.
+    """
+    return prepare_args_parser()

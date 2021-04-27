@@ -15,7 +15,7 @@ class FileTypeError(Exception):
     pass  # noqa: WPS420, WPS604 # ignore wrong keyword: pass, incorrect node inside `class` body
 
 
-def loader(filepath):
+def load_content(filepath):
     """Func load json or yaml files.
 
     Args:

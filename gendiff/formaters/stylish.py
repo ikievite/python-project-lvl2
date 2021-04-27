@@ -5,7 +5,6 @@
 
 from gendiff.find_diff import ADDED, CHANGED, REMOVED, UNCHANGED
 from gendiff.find_diff import NODE_CHILDREN, NODE_NAME, NODE_STATE, NODE_VALUE
-from gendiff.formaters.format_value import encode_to_output
 
 INDENT = 4
 BADGE_SIZE = 1
@@ -29,10 +28,16 @@ def prepare_value(node_value, current_indent):
     Returns:
         encoded value
     """
-    if isinstance(node_value, dict):
+    if node_value is True:
+        formatted_value = 'true'
+    elif node_value is False:
+        formatted_value = 'false'
+    elif node_value is None:
+        formatted_value = 'null'
+    elif isinstance(node_value, dict):
         formatted_value = '\n'.join(iter_complex([OPEN_BRACE], node_value, current_indent))
     else:
-        formatted_value = encode_to_output(node_value)
+        formatted_value = node_value
     return formatted_value
 
 
@@ -92,8 +97,8 @@ def format_line(badge, current_indent, node):
     )
 
 
-def stylish_formater(nodes, output, depth=1):
-    """Func that display diff tree.
+def iter_node(nodes, output, depth=1):
+    """Func finds and returns diff from list with diff dicts.
 
     Args:
         nodes: list with diff dicts
@@ -112,7 +117,7 @@ def stylish_formater(nodes, output, depth=1):
                 key=node[NODE_NAME],
                 value=OPEN_BRACE,
             ))
-            stylish_formater(children, output, depth + 1)
+            iter_node(children, output, depth + 1)
         elif node[NODE_STATE] == CHANGED:
             output.append(changed_value.format(
                 indent=current_indent[:-(BADGE_SIZE + BADGE_PADDING)],
@@ -134,3 +139,15 @@ def stylish_formater(nodes, output, depth=1):
         value=CLOSE_BRACE,
     ))
     return '\n'.join(output)
+
+
+def stylish_formater(diff):
+    """Func that returns stylish formated diff.
+
+    Args:
+        diff: list with diff dicts
+
+    Returns:
+        output string
+    """
+    return iter_node(diff, [OPEN_BRACE])
