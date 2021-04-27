@@ -4,11 +4,11 @@
 
 
 from gendiff.find_diff import find_diff
-from gendiff.formaters.format_diff import format_diff
+from gendiff.formaters.format_diff import STYLISH_VIEW, format_diff
 from gendiff.loader import loader
 
 
-def generate_diff(file1, file2, formater='stylish'):
+def generate_diff(file1, file2, formater=STYLISH_VIEW):
     """Func generate diff of two files.
 
     Args:
