@@ -5,7 +5,6 @@
 
 from gendiff.find_diff import ADDED, CHANGED, REMOVED, UNCHANGED
 from gendiff.find_diff import NODE_CHILDREN, NODE_NAME, NODE_STATE, NODE_VALUE
-from gendiff.formaters.format_value import encode_to_output
 
 INDENT = 4
 BADGE_SIZE = 1
@@ -29,10 +28,16 @@ def prepare_value(node_value, current_indent):
     Returns:
         encoded value
     """
-    if isinstance(node_value, dict):
+    if node_value is True:
+        formatted_value = 'true'
+    elif node_value is False:
+        formatted_value = 'false'
+    elif node_value is None:
+        formatted_value = 'null'
+    elif isinstance(node_value, dict):
         formatted_value = '\n'.join(iter_complex([OPEN_BRACE], node_value, current_indent))
     else:
-        formatted_value = encode_to_output(node_value)
+        formatted_value = node_value
     return formatted_value
 
 
